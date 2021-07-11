@@ -18,10 +18,10 @@ import {
 	underline,
 	yellow,
 } from 'https://deno.land/std@0.79.0/fmt/colors.ts';
+import ConsoleTransport from '../lib/ConsoleTransport.ts';
 import { sprintf } from '../lib/deps.ts';
 import FileTransport from '../lib/FileTransport.ts';
 import PowerLog from '../lib/PowerLog.ts';
-import ConsoleTransport from '../lib/ConsoleTransport.ts';
 import TcpTransport from '../lib/TcpTransport.ts';
 import type { ILogData } from '../lib/types.ts';
 import WriterTransport from '../lib/WriterTransport.ts';

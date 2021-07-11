@@ -20,11 +20,11 @@ You should import any built-in transports you want to use.
 
 ```ts
 import {
-  DiscordWebhookTransport, // For sending discord webhook messages.
-  FileTransport, // For appending to a file.
-  ConsoleTransport, // For writing to stdout or stderr.
-  TcpTransport, // For sending logs over a tcp connection or unix sock.
-  WriterTransport, // For writing to an async writer (an object that has .write).
+	ConsoleTransport, // For writing to stdout or stderr.
+	DiscordWebhookTransport, // For sending discord webhook messages.
+	FileTransport, // For appending to a file.
+	TcpTransport, // For sending logs over a tcp connection or unix sock.
+	WriterTransport, // For writing to an async writer (an object that has .write).
 } from 'https://deno.land/x/powerlog/mod.ts';
 ```
 
@@ -34,12 +34,12 @@ You need a log levels enumerable.
 
 ```ts
 enum MyLogLevels {
-  debug,
-  info,
-  success,
-  alert,
-  warn,
-  critical,
+	debug,
+	info,
+	success,
+	alert,
+	warn,
+	critical,
 }
 ```
 
