@@ -1,4 +1,4 @@
-// spell-checker:ignore () Powerlog sprintf trac dbug Deno
+// spell-checker:ignore () sprintf trac dbug Deno
 
 import {
 	bgBrightRed,
@@ -20,7 +20,7 @@ import {
 } from 'https://deno.land/std@0.79.0/fmt/colors.ts';
 import { sprintf } from '../lib/deps.ts';
 import FileTransport from '../lib/FileTransport.ts';
-import Powerlog from '../lib/Powerlog.ts';
+import PowerLog from '../lib/PowerLog.ts';
 import StdTransport from '../lib/StdTransport.ts';
 import TcpTransport from '../lib/TcpTransport.ts';
 import type { ILogData } from '../lib/types.ts';
@@ -80,7 +80,7 @@ const colorFormatter = (data: ILogData) =>
 	}`;
 
 // Create a new logger.
-const myLogger = Powerlog.get<typeof defaultLogLevels>({
+const myLogger = PowerLog.get<typeof defaultLogLevels>({
 	levels: defaultLogLevels,
 	name: 'myLogger',
 	formatter: noColorFormatter,

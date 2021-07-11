@@ -11,7 +11,7 @@ First,
 You need to import the module into your project.
 
 ```ts
-import { Powerlog } from 'https://deno.land/x/powerlog/mod.ts';
+import { PowerLog } from 'https://deno.land/x/powerlog/mod.ts';
 ```
 
 Second,
