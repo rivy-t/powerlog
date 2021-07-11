@@ -110,6 +110,6 @@ export type TStdTransportOptions<Levels> = TFormatTransportBaseOptions<Levels> &
 	std?: "out" | "err";
 };
 
-export type TPowerlogOperions<Levels> = TFormatTransportBaseOptions<Levels> & {
+export type TPowerlogOptions<Levels> = TFormatTransportBaseOptions<Levels> & {
 	name: string;
 };

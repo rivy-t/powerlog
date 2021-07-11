@@ -1,5 +1,5 @@
 // Imports
-import type { ITransport, TFormatter, TLevelMethods, TPowerlogOperions } from "./types.ts";
+import type { ITransport, TFormatter, TLevelMethods, TPowerlogOptions } from "./types.ts";
 import { Queue, Event } from "./deps.ts";
 import LevelManager from "./LevelManager.ts";
 import TransportBase from "./TransportBase.ts";
@@ -19,7 +19,7 @@ export default class Powerlog<Levels> extends LevelManager<Levels> {
 	 * will be typed.
 	 * @param options The powerlog options.
 	 */
-	public static get<Levels>(options: TPowerlogOperions<Levels>): Powerlog<Levels> & TLevelMethods<Levels> {
+	public static get<Levels>(options: TPowerlogOptions<Levels>): Powerlog<Levels> & TLevelMethods<Levels> {
 		if (cached.has(options.name)) {
 			const logger = cached.get(options.name)!;
 			if (logger.enum !== options.levels)
@@ -59,7 +59,7 @@ export default class Powerlog<Levels> extends LevelManager<Levels> {
 	 * typings to the level methods created by Powerlog.
 	 * @param options The powerlog options.
 	 */
-	public constructor(options: TPowerlogOperions<Levels>) {
+	public constructor(options: TPowerlogOptions<Levels>) {
 		super(options.levels, options.enabled);
 		this.#levels = options.levels;
 		this.#defaultFormatter = options.formatter;
@@ -123,13 +123,13 @@ export default class Powerlog<Levels> extends LevelManager<Levels> {
 
 	/**
 	 * Remove transports from this instance.
-	 * 
+	 *
 	 * **Note** that this will also dispose of the
 	 * transports.
-	 * 
+	 *
 	 * @param transports The transports.
 	 */
-	public async unsuse(...transports: ITransport<Levels>[]) {
+	public async unuse(...transports: ITransport<Levels>[]) {
 		for (const transport of transports) {
 			if (!this.#transports.has(transport)) continue;
 			if (!transport.disposed && transport.initialized)
