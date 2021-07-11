@@ -1,5 +1,5 @@
 // Imports
-import Powerlog from './Powerlog.ts';
+import PowerLog from './PowerLog.ts';
 
 /**
  * A level emitter manager to enable or disable certain
@@ -84,7 +84,7 @@ export type TLevelMethods<Levels> = {
 	[key in keyof Levels]: (
 		message: string,
 		...args: unknown[]
-	) => Powerlog<Levels> & TLevelMethods<Levels>;
+	) => PowerLog<Levels> & TLevelMethods<Levels>;
 };
 
 export type TFormatter = (data: ILogData) => Promise<string | Uint8Array> | string | Uint8Array;
@@ -109,4 +109,4 @@ export type TStdTransportOptions<Levels> = TFormatTransportBaseOptions<Levels> &
 	std?: 'out' | 'err';
 };
 
-export type TPowerlogOptions<Levels> = TFormatTransportBaseOptions<Levels> & { name: string };
+export type TLogOptions<Levels> = TFormatTransportBaseOptions<Levels> & { name: string };

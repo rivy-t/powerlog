@@ -1,39 +1,39 @@
-// spell-checker:ignore () Powerlog
-
 import { Event, Queue } from './deps.ts';
 import LevelManager from './LevelManager.ts';
 import TransportBase from './TransportBase.ts';
-import type { ITransport, TFormatter, TLevelMethods, TPowerlogOptions } from './types.ts';
+import type { ITransport, TFormatter, TLevelMethods, TLogOptions } from './types.ts';
 
-export const cached = new Map<string, Powerlog<unknown>>();
+export class LogContainer extends Map<string, PowerLog<unknown>> {
+	constructor() { super(); }
+};
 
-export default class Powerlog<Levels> extends LevelManager<Levels> {
+export default class PowerLog<Levels> extends LevelManager<Levels> {
 	/**
 	 * This is a static method used to create a new
-	 * Powerlog instance. It is most recommended to use
+	 * PowerLog instance. It is most recommended to use
 	 * this method instead of initiating a new instance of
-	 * Powerlog yourself. This is because the powerlog
+	 * PowerLog yourself. This is because the PowerLog
 	 * instance adds some extra function properties to
 	 * itself that aren't typed. Using
-	 * `Powerlog.get(options)` those function properties
+	 * `PowerLog.get(options)` those function properties
 	 * will be typed.
-	 * @param options The powerlog options.
+	 * @param options The PowerLog options.
 	 */
 	public static get<Levels>(
-		options: TPowerlogOptions<Levels>,
-	): Powerlog<Levels> & TLevelMethods<Levels> {
-		if (cached.has(options.name)) {
-			const logger = cached.get(options.name)!;
+		options: TLogOptions<Levels>,
+	): PowerLog<Levels> & TLevelMethods<Levels> {
+		if (loggers.has(options.name)) {
+			const logger = loggers.get(options.name)!;
 			if (logger.enum !== options.levels) {
-				throw new Error('Levels between existing powerlog and requested powerlog mismatch!');
+				throw new Error('Levels between existing PowerLog and requested PowerLog mismatch!');
 			}
 			if (options.formatter) {
 				logger.format(options.formatter);
 			}
 			return logger as any;
 		}
-		const logger = new Powerlog(options) as any;
-		cached.set(logger.name, logger);
+		const logger = new PowerLog(options) as any;
+		loggers.set(logger.name, logger);
 		return logger;
 	}
 
@@ -64,10 +64,10 @@ export default class Powerlog<Levels> extends LevelManager<Levels> {
 
 	/**
 	 * Avoid using this method yourself, this will not add
-	 * typings to the level methods created by Powerlog.
-	 * @param options The powerlog options.
+	 * typings to the level methods created by PowerLog.
+	 * @param options The PowerLog options.
 	 */
-	public constructor(options: TPowerlogOptions<Levels>) {
+	public constructor(options: TLogOptions<Levels>) {
 		super(options.levels, options.enabled);
 		this.#levels = options.levels;
 		this.#defaultFormatter = options.formatter;
@@ -182,3 +182,8 @@ export default class Powerlog<Levels> extends LevelManager<Levels> {
 		}
 	}
 }
+
+/**
+ * Default global logger container.
+ */
+export const loggers = new LogContainer();
