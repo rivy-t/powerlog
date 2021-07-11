@@ -36,6 +36,10 @@ export default class Powerlog<Levels> extends LevelManager<Levels> {
 		return logger;
 	}
 
+	public log(level: string, message: string, ...args: unknown[]): this {
+		return this._push((this.#levels as any)[level], message, args);
+	}
+
 	/**
 	 * A queue for new log entry transport pushes to
 	 * prevent race conditions between transports.
