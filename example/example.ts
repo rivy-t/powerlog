@@ -3,6 +3,7 @@ import {
 	bgBrightRed,
 	blue,
 	bold,
+	brightBlue,
 	brightCyan,
 	brightMagenta,
 	brightRed,
@@ -22,20 +23,21 @@ import Powerlog from '../lib/Powerlog.ts';
 import StdTransport from '../lib/StdTransport.ts';
 import TcpTransport from '../lib/TcpTransport.ts';
 import type { ILogData } from '../lib/types.ts';
+import WriterTransport from '../lib/WriterTransport.ts';
 
 // An array of colors ordered by the log levels order.
-const colors = [
+const defaultLogLevelColors = [
 	yellow,
 	yellow,
+	brightBlue,
 	cyan,
-	brightCyan,
 	magenta,
 	red,
 	(str: string) => bgBrightRed(brightWhite(str)),
 ];
-const LevelNames = ['trac', 'dbug', 'info', 'note', 'WARN', 'ERR!', 'CRIT'];
+const defaultLogLevelLabels = ['trac', 'dbug', 'info', 'note', 'WARN', 'ERR!', 'CRIT'];
 // The log levels that can be used.
-enum LogLevels {
+enum defaultLogLevels {
 	trace,
 	debug,
 	info,
@@ -58,7 +60,12 @@ const noColorFormatter = (data: ILogData) =>
 	}/${data.timestamp.getFullYear()} ${_n(data.timestamp.getHours())}:${
 		_n(data.timestamp.getMinutes())
 	}:${_n(data.timestamp.getSeconds())}] ` +
-	`(${data.name}) ${LevelNames[data.level]} ${sprintf(data.message, ...data.arguments)}`;
+	`(${data.name}) ${defaultLogLevelLabels[data.level]} ${
+		sprintf(
+			data.message,
+			...data.arguments,
+		)
+	}`;
 
 // A formatter that does use colors.
 const colorFormatter = (data: ILogData) =>
@@ -67,16 +74,13 @@ const colorFormatter = (data: ILogData) =>
 	} ${_c(data.timestamp.getHours())}${_t}${_c(data.timestamp.getMinutes())}${_t}${
 		_c(data.timestamp.getSeconds())
 	}] ` +
-	`(${bold(data.name)}) ${colors[data.level](LevelNames[data.level])} ${
-		sprintf(
-			data.message,
-			...data.arguments,
-		)
+	`(${bold(data.name)}) ${defaultLogLevelColors[data.level](defaultLogLevelLabels[data.level])} ${
+		sprintf(data.message, ...data.arguments)
 	}`;
 
 // Create a new logger.
-const myLogger = Powerlog.get<typeof LogLevels>({
-	levels: LogLevels,
+const myLogger = Powerlog.get<typeof defaultLogLevels>({
+	levels: defaultLogLevels,
 	name: 'myLogger',
 	formatter: noColorFormatter,
 });
@@ -119,6 +123,7 @@ if (TcpConnection) {
 
 // Log some stuff.
 myLogger
+	.log('info', 'log/info Hello')
 	.trace('Hello %s', 'World')
 	.debug('Hello %s', 'World')
 	.info('Hello %s', 'World')
