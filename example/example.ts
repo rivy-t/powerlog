@@ -81,30 +81,41 @@ const myLogger = Powerlog.get<typeof LogLevels>({
 	formatter: noColorFormatter,
 });
 
+const TcpConnection = await (async () => {
+	try {
+		return await Deno.connect({ port: 8080, /* hostname: '127.0.0.1', */ transport: 'tcp' });
+	} catch {
+		console.warn('Unable to connect to "http://127.0.0.1:8080"');
+		return undefined;
+	}
+})();
+
 // Create and use transports.
 await myLogger.use(
-	// A stdout transport.
-	new StdTransport({ levels: LogLevels, formatter: colorFormatter })// Disable 'critical' and 'debug' log levels.
-	.disable(LogLevels.critical, LogLevels.debug),
+	// // A stdout transport.
+	// new StdTransport({ levels: defaultLogLevels, formatter: colorFormatter }) // Disable 'critical' and 'debug' log levels.
+	// 	.disable(defaultLogLevels.critical, defaultLogLevels.debug),
 	// A stderr transport.
 	new StdTransport({
-		levels: LogLevels,
+		levels: defaultLogLevels,
 		formatter: colorFormatter,
 		std: 'err',
-		enabled: [LogLevels.critical],
+		// enabled: [defaultLogLevels.critical],
 	}),
 	// Create a file transport.
-	new FileTransport({ levels: LogLevels, filename: 'myLogs.log' }),
-	// Tcp Transport
-	new TcpTransport({
-		levels: LogLevels,
-		port: 8080,
-		hostname: '127.0.0.1',
-		transport: 'tcp',
-		close: true,
-		formatter: colorFormatter,
-	}),
+	new FileTransport({ levels: defaultLogLevels, filename: 'myLogs.log' }),
 );
+
+if (TcpConnection) {
+	await myLogger.use(
+		new WriterTransport({
+			levels: defaultLogLevels,
+			stream: TcpConnection,
+			close: true,
+			formatter: colorFormatter,
+		}),
+	);
+}
 
 // Log some stuff.
 myLogger
