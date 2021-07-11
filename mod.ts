@@ -5,7 +5,7 @@ export { default as FileTransport } from './lib/FileTransport.ts';
 export { default as FormatTransportBase } from './lib/FormatTransportBase.ts';
 export { default as LevelManager } from './lib/LevelManager.ts';
 export { default as PowerLog } from './lib/PowerLog.ts';
-export { default as StdTransport } from './lib/StdTransport.ts';
+export { default as ConsoleTransport } from './lib/ConsoleTransport.ts';
 export { default as TcpTransport } from './lib/TcpTransport.ts';
 export { default as TransportBase } from './lib/TransportBase.ts';
 export * from './lib/types.ts';

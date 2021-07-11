@@ -21,7 +21,7 @@ import {
 import { sprintf } from '../lib/deps.ts';
 import FileTransport from '../lib/FileTransport.ts';
 import PowerLog from '../lib/PowerLog.ts';
-import StdTransport from '../lib/StdTransport.ts';
+import ConsoleTransport from '../lib/ConsoleTransport.ts';
 import TcpTransport from '../lib/TcpTransport.ts';
 import type { ILogData } from '../lib/types.ts';
 import WriterTransport from '../lib/WriterTransport.ts';
@@ -98,10 +98,10 @@ const TcpConnection = await (async () => {
 // Create and use transports.
 await myLogger.use(
 	// // A stdout transport.
-	// new StdTransport({ levels: defaultLogLevels, formatter: colorFormatter }) // Disable 'critical' and 'debug' log levels.
+	// new ConsoleTransport({ levels: defaultLogLevels, formatter: colorFormatter }) // Disable 'critical' and 'debug' log levels.
 	// 	.disable(defaultLogLevels.critical, defaultLogLevels.debug),
 	// A stderr transport.
-	new StdTransport({
+	new ConsoleTransport({
 		levels: defaultLogLevels,
 		formatter: colorFormatter,
 		std: 'err',

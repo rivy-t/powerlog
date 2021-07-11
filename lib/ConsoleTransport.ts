@@ -1,16 +1,16 @@
 // Imports
-import type { ILogData, TStdTransportOptions } from './types.ts';
+import type { ILogData, TConsoleTransportOptions } from './types.ts';
 import WriterTransport from './WriterTransport.ts';
 
 /**
  * A transport that uses either stdout or stderr.
  */
-export default class StdTransport<Levels> extends WriterTransport<Levels> {
+export default class ConsoleTransport<Levels> extends WriterTransport<Levels> {
 	/**
 	 * Create a new std transport.
 	 * @param options The std transport options.
 	 */
-	public constructor(options: TStdTransportOptions<Levels>) {
+	public constructor(options: TConsoleTransportOptions<Levels>) {
 		let stream: Deno.Writer & Deno.Closer;
 		if (options.std === 'out' || options.std === null || options.std === undefined) {
 			stream = Deno.stdout;

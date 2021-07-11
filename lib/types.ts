@@ -105,7 +105,7 @@ export type TFileTransportOptions<Levels> = TFormatTransportBaseOptions<Levels> 
 	reset?: boolean;
 };
 
-export type TStdTransportOptions<Levels> = TFormatTransportBaseOptions<Levels> & {
+export type TConsoleTransportOptions<Levels> = TFormatTransportBaseOptions<Levels> & {
 	std?: 'out' | 'err';
 };
 

@@ -22,7 +22,7 @@ You should import any built-in transports you want to use.
 import {
   DiscordWebhookTransport, // For sending discord webhook messages.
   FileTransport, // For appending to a file.
-  StdTransport, // For writing to stdout or stderr.
+  ConsoleTransport, // For writing to stdout or stderr.
   TcpTransport, // For sending logs over a tcp connection or unix sock.
   WriterTransport, // For writing to an async writer (an object that has .write).
 } from 'https://deno.land/x/powerlog/mod.ts';
@@ -56,7 +56,7 @@ Fifth,
 You can now also create the transports you wish to use.
 
 ```ts
-const myStdoutTransport = new StdTransport({ levels: MyLogLevels });
+const myStdoutTransport = new ConsoleTransport({ levels: MyLogLevels });
 ```
 
 ```ts
@@ -93,14 +93,14 @@ When creating transports you will have the ability to add formatting to your mes
 
 ### Default Formatting
 
-The default formatting applies to `FormatTransportBase`, `FileTransport`, `StdTransport` and `TcpTransport`.
+The default formatting applies to `FormatTransportBase`, `FileTransport`, `ConsoleTransport` and `TcpTransport`.
 
 You can, with either of these constructors, add a formatting property which is a function that returns either a `string` or a `Uint8Array`, it can be both synchronous and asynchronous.
 
 **Example**:
 
 ```ts
-const transport = new StdTransport({ formatter: (data) => `[${data.timestamp.toJSON()}] (${data.name}) ${MyLogLevels[data.level]} ${sprintf(data.message, ...data.arguments)}` });
+const transport = new ConsoleTransport({ formatter: (data) => `[${data.timestamp.toJSON()}] (${data.name}) ${MyLogLevels[data.level]} ${sprintf(data.message, ...data.arguments)}` });
 ```
 
 You can also change the formatter later on with the use `<FormatTransportBase>.format(formatter)`.
