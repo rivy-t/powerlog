@@ -6,16 +6,16 @@ const regex = /^\d+$/g;
 /**
  * Manage what levels goes through or is ignored.
  */
-export default class LevelManager<Levels> implements ILevelEmitter<Levels> {
+export default class LogLevelManager<LogLevels> implements ILevelEmitter<LogLevels> {
 	/** The levels that are currently enabled. */
 	#levels: number = 0;
-	#enum: Levels;
+	#enum: LogLevels;
 
 	/** Get the levels that are currently enabled. */
 	public get levels(): number {
 		return this.#levels;
 	}
-	public get enum(): Levels {
+	public get enum(): LogLevels {
 		return this.#enum;
 	}
 
@@ -23,7 +23,7 @@ export default class LevelManager<Levels> implements ILevelEmitter<Levels> {
 	 * Initialize a new level manager.
 	 * @param levels The levels enumerable.
 	 */
-	public constructor(levels: Levels, enableArray: (keyof Levels | number)[] | -1 = -1) {
+	public constructor(levels: LogLevels, enableArray: (keyof LogLevels | number)[] | -1 = -1) {
 		this.#enum = levels;
 
 		if (Array.isArray(enableArray)) {
@@ -39,7 +39,7 @@ export default class LevelManager<Levels> implements ILevelEmitter<Levels> {
 	 * Enable one or more levels.
 	 * @param levels The levels to enable.
 	 */
-	enable(...levels: (keyof Levels | number)[]): this {
+	enable(...levels: (keyof LogLevels | number)[]): this {
 		for (let level of levels) {
 			if ((this.#enum as any)[level] === undefined) {
 				throw new Error("Unknown level '" + level + "'");
@@ -57,7 +57,7 @@ export default class LevelManager<Levels> implements ILevelEmitter<Levels> {
 	 * Disable one or more levels.
 	 * @param levels The levels to disable.
 	 */
-	disable(...levels: (keyof Levels | number)[]): this {
+	disable(...levels: (keyof LogLevels | number)[]): this {
 		for (let level of levels) {
 			if ((this.#enum as any)[level] === undefined) {
 				throw new Error("Unknown level '" + level + "'");
@@ -74,7 +74,7 @@ export default class LevelManager<Levels> implements ILevelEmitter<Levels> {
 	 * Check whether one or more levels are emitted.
 	 * @param levels The levels to check.
 	 */
-	emits(...levels: (keyof Levels | number)[]): boolean {
+	emits(...levels: (keyof LogLevels | number)[]): boolean {
 		return levels.every((level) => {
 			if ((this.#enum as any)[level] === undefined) {
 				throw new Error("Unknown level '" + level + "'");

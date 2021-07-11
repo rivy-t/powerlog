@@ -5,7 +5,7 @@ import type { TWriterTransportOptions } from './types.ts';
 /**
  * A transport that writes to a stream.
  */
-export default class WriterTransport<Levels> extends FormatTransportBase<Levels> {
+export default class WriterTransport<LogLevels> extends FormatTransportBase<LogLevels> {
 	/** The stream. */
 	#stream: Deno.Writer & Deno.Closer | undefined;
 	#close: boolean = true;
@@ -15,7 +15,7 @@ export default class WriterTransport<Levels> extends FormatTransportBase<Levels>
 	 * @param levels The levels enumerable.
 	 * @param stream The write stream.
 	 */
-	public constructor(options: TWriterTransportOptions<Levels>) {
+	public constructor(options: TWriterTransportOptions<LogLevels>) {
 		super(options.levels, { formatter: options.formatter, enabled: options.enabled });
 		this.#stream = options.stream;
 		if (this.#close === false) {

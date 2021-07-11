@@ -85,10 +85,10 @@ export interface IDiscordMessage {
 
 export type TDiscordFormatter = (data: ILogData) => Promise<IDiscordMessage> | IDiscordMessage;
 
-export type TDiscordOptions<Levels> = {
-	enabled?: (number | keyof Levels)[] | -1;
+export type TDiscordOptions<LogLevels> = {
+	enabled?: (number | keyof LogLevels)[] | -1;
 	formatter?: TDiscordFormatter;
-	levels: Levels;
+	levels: LogLevels;
 	url: string;
 	username?: string;
 	avatar_url?: string;
@@ -100,7 +100,7 @@ export type TDiscordOptions<Levels> = {
 /**
  * A transport that sends messages to a discord webhook.
  */
-export default class DiscordWebhookTransport<Levels> extends TransportBase<Levels> {
+export default class DiscordWebhookTransport<LogLevels> extends TransportBase<LogLevels> {
 	#formatter: undefined | TDiscordFormatter;
 	#url: string;
 	#username?: string;
@@ -112,7 +112,7 @@ export default class DiscordWebhookTransport<Levels> extends TransportBase<Level
 	 * @param options The discord webhook transport
 	 *  options.
 	 */
-	public constructor(options: TDiscordOptions<Levels>) {
+	public constructor(options: TDiscordOptions<LogLevels>) {
 		super(options.levels, options.enabled);
 		this.#formatter = options.formatter;
 		this.#url = options.url;

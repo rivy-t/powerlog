@@ -1,5 +1,5 @@
 import { Event, Queue } from './deps.ts';
-import LevelManager from './LevelManager.ts';
+import LogLevelManager from './LogLevelManager.ts';
 import TransportBase from './TransportBase.ts';
 import type { ITransport, TFormatter, TLevelMethods, TLogOptions } from './types.ts';
 
@@ -7,7 +7,12 @@ export class LogContainer extends Map<string, PowerLog<unknown>> {
 	constructor() { super(); }
 };
 
-export default class PowerLog<Levels> extends LevelManager<Levels> {
+/**
+ * Default global logger container.
+ */
+ export const loggers = new LogContainer();
+
+export default class PowerLog<LogLevels> extends LogLevelManager<LogLevels> {
 	/**
 	 * This is a static method used to create a new
 	 * PowerLog instance. It is most recommended to use
@@ -19,13 +24,13 @@ export default class PowerLog<Levels> extends LevelManager<Levels> {
 	 * will be typed.
 	 * @param options The PowerLog options.
 	 */
-	public static get<Levels>(
-		options: TLogOptions<Levels>,
-	): PowerLog<Levels> & TLevelMethods<Levels> {
+	public static get<LogLevels>(
+		options: TLogOptions<LogLevels>,
+	): PowerLog<LogLevels> & TLevelMethods<LogLevels> {
 		if (loggers.has(options.name)) {
 			const logger = loggers.get(options.name)!;
 			if (logger.enum !== options.levels) {
-				throw new Error('Levels between existing PowerLog and requested PowerLog mismatch!');
+				throw new Error('LogLevels between existing PowerLog and requested PowerLog mismatch!');
 			}
 			if (options.formatter) {
 				logger.format(options.formatter);
@@ -48,13 +53,13 @@ export default class PowerLog<Levels> extends LevelManager<Levels> {
 	#queue = new Queue();
 
 	/** The levels enumerable. */
-	#levels: Levels;
+	#levels: LogLevels;
 
 	/** A default formatter to apply to new transports. */
 	#defaultFormatter?: TFormatter;
 
 	/** Transports to send log entries to. */
-	#transports = new Set<ITransport<Levels>>();
+	#transports = new Set<ITransport<LogLevels>>();
 
 	/** The name of this logger. */
 	public readonly name: string;
@@ -67,7 +72,7 @@ export default class PowerLog<Levels> extends LevelManager<Levels> {
 	 * typings to the level methods created by PowerLog.
 	 * @param options The PowerLog options.
 	 */
-	public constructor(options: TLogOptions<Levels>) {
+	public constructor(options: TLogOptions<LogLevels>) {
 		super(options.levels, options.enabled);
 		this.#levels = options.levels;
 		this.#defaultFormatter = options.formatter;
@@ -109,7 +114,7 @@ export default class PowerLog<Levels> extends LevelManager<Levels> {
 	 * Add an initialize transports to this instance.
 	 * @param transports The transports.
 	 */
-	public async use(...transports: ITransport<Levels>[]) {
+	public async use(...transports: ITransport<LogLevels>[]) {
 		for (const transport of transports) {
 			if (!TransportBase.isTransport(transport)) {
 				throw new Error('Not a transport!');
@@ -139,7 +144,7 @@ export default class PowerLog<Levels> extends LevelManager<Levels> {
 	 *
 	 * @param transports The transports.
 	 */
-	public async remove(...transports: ITransport<Levels>[]) {
+	public async remove(...transports: ITransport<LogLevels>[]) {
 		for (const transport of transports) {
 			if (!this.#transports.has(transport)) continue;
 			if (!transport.disposed && transport.initialized) {
@@ -182,8 +187,3 @@ export default class PowerLog<Levels> extends LevelManager<Levels> {
 		}
 	}
 }
-
-/**
- * Default global logger container.
- */
-export const loggers = new LogContainer();
