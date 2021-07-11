@@ -1,4 +1,5 @@
-// Imports
+// spell-checker:ignore () Deno
+
 import FormatTransportBase from './FormatTransportBase.ts';
 import type { TWriterTransportOptions } from './types.ts';
 

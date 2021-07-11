@@ -1,6 +1,6 @@
 # Powerlog
 
-<!-- spell-checker:ignore () Powerlog Deno sprintf -->
+<!-- spell-checker:ignore () PowerLog Deno sprintf markdownlint -->
 
 > A logger for Deno that sends your logs wherever you want them.
 

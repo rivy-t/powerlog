@@ -1,4 +1,5 @@
-// Imports
+// spell-checker:ignore () sprintf endRegion
+
 import { sprintf } from './deps.ts';
 import TransportBase from './TransportBase.ts';
 import type { ILogData, TFormatTransportBaseOptions } from './types.ts';

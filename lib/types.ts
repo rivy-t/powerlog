@@ -1,4 +1,5 @@
-// Imports
+// spell-checker:ignore () Deno
+
 import PowerLog from './PowerLog.ts';
 
 /**

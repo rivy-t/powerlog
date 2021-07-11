@@ -1,4 +1,5 @@
-// Imports
+// spell-checker:ignore () Deno
+
 import type { ILogData, TFileTransportOptions } from './types.ts';
 import WriterTransport from './WriterTransport.ts';
 

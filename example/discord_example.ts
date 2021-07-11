@@ -1,4 +1,5 @@
-// Imports
+// spell-checker:ignore () sprintf
+
 import { sprintf } from '../lib/deps.ts';
 import DiscordWebhookTransport from '../lib/DiscordWebhookTransport.ts';
 import PowerLog from '../lib/PowerLog.ts';
