@@ -1,6 +1,6 @@
 // Imports
-import type { ILogData, TStdTransportOptions } from "./types.ts";
-import WriterTransport from "./WriterTransport.ts";
+import type { ILogData, TStdTransportOptions } from './types.ts';
+import WriterTransport from './WriterTransport.ts';
 
 /**
  * A transport that uses either stdout or stderr.
@@ -12,17 +12,14 @@ export default class StdTransport<Levels> extends WriterTransport<Levels> {
 	 */
 	public constructor(options: TStdTransportOptions<Levels>) {
 		let stream: Deno.Writer & Deno.Closer;
-		if (options.std === "out" || options.std === null || options.std === undefined)
+		if (options.std === 'out' || options.std === null || options.std === undefined) {
 			stream = Deno.stdout;
-		else if (options.std === "err")
+		} else if (options.std === 'err') {
 			stream = Deno.stderr;
-		else
+		} else {
 			throw new Error("Unknown std '" + options.std + "'");
-		super({
-			...options,
-			stream,
-			close: false,
-		});
+		}
+		super({ ...options, stream, close: false });
 	}
 
 	// Add a newline character to the message.

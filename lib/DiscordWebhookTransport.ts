@@ -1,15 +1,13 @@
 // Imports
-import type { ILogData, TFormatTransportBaseOptions } from "./types.ts";
-import { sprintf } from "./deps.ts";
-import TransportBase from "./TransportBase.ts";
+import { sprintf } from './deps.ts';
+import TransportBase from './TransportBase.ts';
+import type { ILogData, TFormatTransportBaseOptions } from './types.ts';
 
 // #region Discord Message Interfaces
 
 export interface IDiscordEmbedImage {
 	url: string;
-	image: {
-		url: string;
-	}
+	image: { url: string };
 }
 
 export interface IDiscordEmbedField {
@@ -54,8 +52,8 @@ export interface IDiscordEmbed {
 		field21?: IDiscordEmbedField | undefined,
 		field22?: IDiscordEmbedField | undefined,
 		field23?: IDiscordEmbedField | undefined,
-		field24?: IDiscordEmbedField | undefined
-	],
+		field24?: IDiscordEmbedField | undefined,
+	];
 	title?: string | null;
 	description?: string | null;
 	url?: string | null;
@@ -124,32 +122,34 @@ export default class DiscordWebhookTransport<Levels> extends TransportBase<Level
 	}
 	public async push(data: ILogData): Promise<unknown> {
 		if (!this.emits(data.level)) return;
-		this._push(() => new Promise(resolve => setTimeout(resolve, this.#delay)));
+		this._push(() => new Promise((resolve) => setTimeout(resolve, this.#delay)));
 		return await this._push(async () => {
-			let message = typeof this.#formatter === "function"
+			let message = typeof this.#formatter === 'function'
 				? (await this.#formatter(data)) as IDiscordMessage
-				: { content: sprintf("%s " + data.message, (this.enum as any)[data.level], ...data.arguments) } as IDiscordMessage;
+				: {
+					content: sprintf('%s ' + data.message, (this.enum as any)[data.level], ...data.arguments),
+				} as IDiscordMessage;
 			if (message instanceof Uint8Array) (message as any) = new TextDecoder().decode(message);
-			if (typeof message === "string") message = { content: message };
-			if (!message.username && this.#username)
+			if (typeof message === 'string') message = { content: message };
+			if (!message.username && this.#username) {
 				message.username = this.#username;
-			if (!message.avatar_url && this.#avatar_url)
+			}
+			if (!message.avatar_url && this.#avatar_url) {
 				message.avatar_url = this.#avatar_url;
+			}
 			const json = JSON.stringify(message);
 			const response = await fetch(this.#url, {
-				headers: {
-					"Content-Type": "application/json",
-					"Accepts": "application/json"
-				},
-				method: "POST",
-				body: json
+				headers: { 'Content-Type': 'application/json', 'Accepts': 'application/json' },
+				method: 'POST',
+				body: json,
 			});
 			const text = await response.text();
 			try {
 				const json = JSON.parse(text);
-				if (json.message)
+				if (json.message) {
 					throw new Error(json.message);
-			} catch (error) { }
+				}
+			} catch (error) {}
 		});
 	}
 
@@ -166,9 +166,9 @@ export default class DiscordWebhookTransport<Levels> extends TransportBase<Level
 	 * Set/get the current formatter.
 	 * @param formatter The formatter.
 	 */
-	public format(formatter?: TDiscordFormatter): this | TDiscordFormatter | undefined
+	public format(formatter?: TDiscordFormatter): this | TDiscordFormatter | undefined;
 	public format(formatter?: TDiscordFormatter): this | TDiscordFormatter | undefined {
-		if (typeof formatter === "function") {
+		if (typeof formatter === 'function') {
 			this.#formatter = formatter;
 			return this;
 		}

@@ -1,13 +1,12 @@
 // Imports
-import type { ITransport, TFormatter, TLevelMethods, TPowerlogOptions } from "./types.ts";
-import { Queue, Event } from "./deps.ts";
-import LevelManager from "./LevelManager.ts";
-import TransportBase from "./TransportBase.ts";
+import { Event, Queue } from './deps.ts';
+import LevelManager from './LevelManager.ts';
+import TransportBase from './TransportBase.ts';
+import type { ITransport, TFormatter, TLevelMethods, TPowerlogOptions } from './types.ts';
 
 export const cached = new Map<string, Powerlog<unknown>>();
 
 export default class Powerlog<Levels> extends LevelManager<Levels> {
-
 	/**
 	 * This is a static method used to create a new
 	 * Powerlog instance. It is most recommended to use
@@ -19,13 +18,17 @@ export default class Powerlog<Levels> extends LevelManager<Levels> {
 	 * will be typed.
 	 * @param options The powerlog options.
 	 */
-	public static get<Levels>(options: TPowerlogOptions<Levels>): Powerlog<Levels> & TLevelMethods<Levels> {
+	public static get<Levels>(
+		options: TPowerlogOptions<Levels>,
+	): Powerlog<Levels> & TLevelMethods<Levels> {
 		if (cached.has(options.name)) {
 			const logger = cached.get(options.name)!;
-			if (logger.enum !== options.levels)
-				throw new Error("Levels between existing powerlog and requested powerlog mismatch!");
-			if (options.formatter)
+			if (logger.enum !== options.levels) {
+				throw new Error('Levels between existing powerlog and requested powerlog mismatch!');
+			}
+			if (options.formatter) {
 				logger.format(options.formatter);
+			}
 			return logger as any;
 		}
 		const logger = new Powerlog(options) as any;
@@ -65,8 +68,9 @@ export default class Powerlog<Levels> extends LevelManager<Levels> {
 		this.#defaultFormatter = options.formatter;
 		this.name = options.name;
 		for (const key in options.levels) {
-			if (typeof key !== "string") continue;
-			(this as any)[key] = (message: string, ...args: unknown[]) => this._push((this.#levels as any)[key], message, args);
+			if (typeof key !== 'string') continue;
+			(this as any)[key] = (message: string, ...args: unknown[]) =>
+				this._push((this.#levels as any)[key], message, args);
 		}
 	}
 
@@ -87,13 +91,7 @@ export default class Powerlog<Levels> extends LevelManager<Levels> {
 			if (!transport.emits(level)) continue;
 			this.#queue.push(async () => {
 				try {
-					await transport.push({
-						level,
-						message,
-						arguments: args,
-						name: this.name,
-						timestamp: t,
-					});
+					await transport.push({ level, message, arguments: args, name: this.name, timestamp: t });
 				} catch (error) {
 					this.onerror.dispatch(error);
 				}
@@ -102,21 +100,28 @@ export default class Powerlog<Levels> extends LevelManager<Levels> {
 		return this;
 	}
 
-
 	/**
 	 * Add an initialize transports to this instance.
 	 * @param transports The transports.
 	 */
 	public async use(...transports: ITransport<Levels>[]) {
 		for (const transport of transports) {
-			if (!TransportBase.isTransport(transport))
-				throw new Error("Not a transport!");
-			if (transport.disposed)
-				throw new Error("Transport has already been disposed of!");
-			if (!transport.initialized)
+			if (!TransportBase.isTransport(transport)) {
+				throw new Error('Not a transport!');
+			}
+			if (transport.disposed) {
+				throw new Error('Transport has already been disposed of!');
+			}
+			if (!transport.initialized) {
 				await transport.init();
-			if (typeof (transport as any).format === "function" && (transport as any).format() === undefined && this.#defaultFormatter !== undefined)
+			}
+			if (
+				typeof (transport as any).format === 'function' && (transport as any)
+						.format() === undefined &&
+				this.#defaultFormatter !== undefined
+			) {
 				(transport as any).format(this.#defaultFormatter);
+			}
 			this.#transports.add(transport);
 		}
 	}
@@ -132,8 +137,9 @@ export default class Powerlog<Levels> extends LevelManager<Levels> {
 	public async unuse(...transports: ITransport<Levels>[]) {
 		for (const transport of transports) {
 			if (!this.#transports.has(transport)) continue;
-			if (!transport.disposed && transport.initialized)
+			if (!transport.disposed && transport.initialized) {
 				await transport.dispose();
+			}
 			this.#transports.delete(transport);
 		}
 	}
@@ -151,9 +157,9 @@ export default class Powerlog<Levels> extends LevelManager<Levels> {
 	 * Set/get the default formatter.
 	 * @param formatter The formatter.
 	 */
-	public format(formatter?: TFormatter): this | TFormatter | undefined
+	public format(formatter?: TFormatter): this | TFormatter | undefined;
 	public format(formatter?: TFormatter): this | TFormatter | undefined {
-		if (typeof formatter === "function") {
+		if (typeof formatter === 'function') {
 			this.#defaultFormatter = formatter;
 			return this;
 		}
@@ -167,7 +173,7 @@ export default class Powerlog<Levels> extends LevelManager<Levels> {
 		for (const transport of this.#transports) {
 			try {
 				await transport.dispose();
-			} catch (error) { }
+			} catch (error) {}
 		}
 	}
 }

@@ -1,12 +1,11 @@
 // Imports
-import type { ILogData, TFileTransportOptions } from "./types.ts";
-import WriterTransport from "./WriterTransport.ts";
+import type { ILogData, TFileTransportOptions } from './types.ts';
+import WriterTransport from './WriterTransport.ts';
 
 /**
  * A transport that pushes logs to a file.
  */
 export default class FileTransport<Levels> extends WriterTransport<Levels> {
-
 	/** The filename to write to. */
 	#filename: string;
 
@@ -20,8 +19,9 @@ export default class FileTransport<Levels> extends WriterTransport<Levels> {
 	public constructor(options: TFileTransportOptions<Levels>) {
 		super(options);
 		this.#filename = options.filename;
-		if (options.reset === true)
+		if (options.reset === true) {
 			this.#reset = true;
+		}
 	}
 
 	/**
@@ -32,12 +32,9 @@ export default class FileTransport<Levels> extends WriterTransport<Levels> {
 			try {
 				await Deno.lstat(this.#filename);
 				await Deno.remove(this.#filename, { recursive: true });
-			} catch (error) { }
+			} catch (error) {}
 		}
-		const file = await Deno.open(this.#filename, {
-			create: true,
-			append: true
-		});
+		const file = await Deno.open(this.#filename, { create: true, append: true });
 		this.__setStream(file);
 		await super.init();
 	}

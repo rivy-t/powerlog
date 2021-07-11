@@ -1,12 +1,11 @@
 // Imports
-import Powerlog from "./Powerlog.ts";
+import Powerlog from './Powerlog.ts';
 
 /**
  * A level emitter manager to enable or disable certain
  * levels after construction.
  */
 export interface ILevelEmitter<Levels> {
-
 	/**
 	 * The levels that are emitted.
 	 */
@@ -38,7 +37,6 @@ export type TArguments = any[];
  * The produced log data.
  */
 export interface ILogData {
-
 	/** The level that was used to produce the data. */
 	readonly level: number;
 
@@ -62,7 +60,6 @@ export interface ILogData {
  * A way to transfer information to a destination.
  */
 export interface ITransport<Levels> extends ILevelEmitter<Levels> {
-
 	/**
 	 * Initialize the transport.
 	 */
@@ -81,12 +78,14 @@ export interface ITransport<Levels> extends ILevelEmitter<Levels> {
 
 	initialized: boolean;
 	disposed: boolean;
-
 }
 
 export type TLevelMethods<Levels> = {
-	[key in keyof Levels]: (message: string, ...args: unknown[]) => Powerlog<Levels> & TLevelMethods<Levels>;
-}
+	[key in keyof Levels]: (
+		message: string,
+		...args: unknown[]
+	) => Powerlog<Levels> & TLevelMethods<Levels>;
+};
 
 export type TFormatter = (data: ILogData) => Promise<string | Uint8Array> | string | Uint8Array;
 
@@ -94,7 +93,7 @@ export type TFormatTransportBaseOptions<Levels> = {
 	levels: Levels;
 	enabled?: (number | keyof Levels)[] | -1;
 	formatter?: TFormatter;
-}
+};
 
 export type TWriterTransportOptions<Levels> = TFormatTransportBaseOptions<Levels> & {
 	stream?: Deno.Writer & Deno.Closer;
@@ -107,9 +106,7 @@ export type TFileTransportOptions<Levels> = TFormatTransportBaseOptions<Levels> 
 };
 
 export type TStdTransportOptions<Levels> = TFormatTransportBaseOptions<Levels> & {
-	std?: "out" | "err";
+	std?: 'out' | 'err';
 };
 
-export type TPowerlogOptions<Levels> = TFormatTransportBaseOptions<Levels> & {
-	name: string;
-};
+export type TPowerlogOptions<Levels> = TFormatTransportBaseOptions<Levels> & { name: string };

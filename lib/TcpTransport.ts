@@ -1,12 +1,11 @@
 // Imports
-import type { TWriterTransportOptions } from "./types.ts";
-import WriterTransport from "./WriterTransport.ts";
+import type { TWriterTransportOptions } from './types.ts';
+import WriterTransport from './WriterTransport.ts';
 
 /**
  * A transport that pushes logs to a tcp server or a unix sock.
  */
 export default class TcpTransport<Levels> extends WriterTransport<Levels> {
-
 	/** The connection options. */
 	#connectOptions: Deno.ConnectOptions;
 
@@ -19,7 +18,7 @@ export default class TcpTransport<Levels> extends WriterTransport<Levels> {
 		this.#connectOptions = {
 			port: options.port,
 			hostname: options.hostname,
-			transport: options.transport
+			transport: options.transport,
 		};
 	}
 

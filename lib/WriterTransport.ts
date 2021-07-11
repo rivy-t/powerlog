@@ -1,12 +1,11 @@
 // Imports
-import type { TWriterTransportOptions } from "./types.ts";
-import FormatTransportBase from "./FormatTransportBase.ts";
+import FormatTransportBase from './FormatTransportBase.ts';
+import type { TWriterTransportOptions } from './types.ts';
 
 /**
  * A transport that writes to a stream.
  */
 export default class WriterTransport<Levels> extends FormatTransportBase<Levels> {
-
 	/** The stream. */
 	#stream: Deno.Writer & Deno.Closer | undefined;
 	#close: boolean = true;
@@ -17,13 +16,11 @@ export default class WriterTransport<Levels> extends FormatTransportBase<Levels>
 	 * @param stream The write stream.
 	 */
 	public constructor(options: TWriterTransportOptions<Levels>) {
-		super(options.levels, {
-			formatter: options.formatter,
-			enabled: options.enabled
-		});
+		super(options.levels, { formatter: options.formatter, enabled: options.enabled });
 		this.#stream = options.stream;
-		if (this.#close === false)
+		if (this.#close === false) {
 			this.#close = false;
+		}
 	}
 
 	/**
@@ -31,8 +28,9 @@ export default class WriterTransport<Levels> extends FormatTransportBase<Levels>
 	 * @param stream The write stream.
 	 */
 	public __setStream(stream: Deno.Writer & Deno.Closer): this {
-		if (this.#stream !== undefined)
-			throw new Error("Stream is already set!");
+		if (this.#stream !== undefined) {
+			throw new Error('Stream is already set!');
+		}
 		this.#stream = stream;
 		return this;
 	}
@@ -49,8 +47,9 @@ export default class WriterTransport<Levels> extends FormatTransportBase<Levels>
 	 * Initialize the stream.
 	 */
 	public init(): Promise<void> | void {
-		if (this.#stream === undefined)
-			throw new Error("Initialization failed, no stream found!");
+		if (this.#stream === undefined) {
+			throw new Error('Initialization failed, no stream found!');
+		}
 		super.init();
 	}
 
@@ -58,9 +57,9 @@ export default class WriterTransport<Levels> extends FormatTransportBase<Levels>
 	 * Dispose of the stream.
 	 */
 	public dispose() {
-		if (this.#close)
+		if (this.#close) {
 			this.#stream?.close();
+		}
 		super.dispose();
 	}
-
 }

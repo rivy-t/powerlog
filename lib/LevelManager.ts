@@ -1,5 +1,5 @@
 // Imports
-import type { ILevelEmitter } from "./types.ts";
+import type { ILevelEmitter } from './types.ts';
 
 const regex = /^\d+$/g;
 
@@ -12,8 +12,12 @@ export default class LevelManager<Levels> implements ILevelEmitter<Levels> {
 	#enum: Levels;
 
 	/** Get the levels that are currently enabled. */
-	public get levels(): number { return this.#levels; }
-	public get enum(): Levels { return this.#enum; }
+	public get levels(): number {
+		return this.#levels;
+	}
+	public get enum(): Levels {
+		return this.#enum;
+	}
 
 	/**
 	 * Initialize a new level manager.
@@ -22,11 +26,13 @@ export default class LevelManager<Levels> implements ILevelEmitter<Levels> {
 	public constructor(levels: Levels, enableArray: (keyof Levels | number)[] | -1 = -1) {
 		this.#enum = levels;
 
-		if (Array.isArray(enableArray))
+		if (Array.isArray(enableArray)) {
 			this.enable(...enableArray);
-		else if (enableArray === -1)
-			for (const _ in levels)
+		} else if (enableArray === -1) {
+			for (const _ in levels) {
 				this.enable(_);
+			}
+		}
 	}
 
 	/**
@@ -35,9 +41,10 @@ export default class LevelManager<Levels> implements ILevelEmitter<Levels> {
 	 */
 	enable(...levels: (keyof Levels | number)[]): this {
 		for (let level of levels) {
-			if ((this.#enum as any)[level] === undefined)
+			if ((this.#enum as any)[level] === undefined) {
 				throw new Error("Unknown level '" + level + "'");
-			if (typeof level === "string" && !regex.test(level)) level = this.#enum[level] as any;
+			}
+			if (typeof level === 'string' && !regex.test(level)) level = this.#enum[level] as any;
 			level = Number(level);
 			const l = 2 ** (level as number);
 			if ((this.#levels & l) === l) continue;
@@ -52,9 +59,10 @@ export default class LevelManager<Levels> implements ILevelEmitter<Levels> {
 	 */
 	disable(...levels: (keyof Levels | number)[]): this {
 		for (let level of levels) {
-			if ((this.#enum as any)[level] === undefined)
+			if ((this.#enum as any)[level] === undefined) {
 				throw new Error("Unknown level '" + level + "'");
-			if (typeof level === "string" && !regex.test(level)) level = this.#enum[level] as any;
+			}
+			if (typeof level === 'string' && !regex.test(level)) level = this.#enum[level] as any;
 			const l = 2 ** (level as number);
 			if ((this.#levels & l) !== l) continue;
 			this.#levels -= l;
@@ -67,10 +75,11 @@ export default class LevelManager<Levels> implements ILevelEmitter<Levels> {
 	 * @param levels The levels to check.
 	 */
 	emits(...levels: (keyof Levels | number)[]): boolean {
-		return levels.every(level => {
-			if ((this.#enum as any)[level] === undefined)
+		return levels.every((level) => {
+			if ((this.#enum as any)[level] === undefined) {
 				throw new Error("Unknown level '" + level + "'");
-			if (typeof level === "string" && !regex.test(level)) level = this.#enum[level] as any;
+			}
+			if (typeof level === 'string' && !regex.test(level)) level = this.#enum[level] as any;
 			const l = 2 ** (level as number);
 			return (this.#levels & l) === l;
 		});

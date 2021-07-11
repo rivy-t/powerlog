@@ -1,6 +1,6 @@
 // Imports
-import TransportBase from "./TransportBase.ts";
-import { ILogData, TFormatter, TFormatTransportBaseOptions } from "./types.ts";
+import TransportBase from './TransportBase.ts';
+import { ILogData, TFormatter, TFormatTransportBaseOptions } from './types.ts';
 
 /**
  * The transport base, but adds the ability for an external formatter.
@@ -13,7 +13,10 @@ export default class FormatTransportBase<Levels> extends TransportBase<Levels> {
 	 * @param levels The levels enum.
 	 * @param formatter The formatter function.
 	 */
-	public constructor(levels: Levels, options?: Omit<TFormatTransportBaseOptions<Levels>, "levels">) {
+	public constructor(
+		levels: Levels,
+		options?: Omit<TFormatTransportBaseOptions<Levels>, 'levels'>,
+	) {
 		super(levels, options?.enabled);
 		this.#formatter = options?.formatter;
 	}
@@ -31,9 +34,9 @@ export default class FormatTransportBase<Levels> extends TransportBase<Levels> {
 	 * Set/get the current formatter.
 	 * @param formatter The formatter.
 	 */
-	public format(formatter?: TFormatter): this | TFormatter | undefined
+	public format(formatter?: TFormatter): this | TFormatter | undefined;
 	public format(formatter?: TFormatter): this | TFormatter | undefined {
-		if (typeof formatter === "function") {
+		if (typeof formatter === 'function') {
 			this.#formatter = formatter;
 			return this;
 		}
@@ -46,10 +49,11 @@ export default class FormatTransportBase<Levels> extends TransportBase<Levels> {
 	 * @param data The log data.
 	 */
 	public async dataToByteArray(data: ILogData): Promise<Uint8Array> {
-		if (typeof this.#formatter === "function") {
+		if (typeof this.#formatter === 'function') {
 			const _ = await this.#formatter(data);
-			if (typeof _ === "string")
+			if (typeof _ === 'string') {
 				return new TextEncoder().encode(_);
+			}
 			return _;
 		}
 		return await super.dataToByteArray(data);

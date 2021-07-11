@@ -1,30 +1,34 @@
 // Imports
-import type { ILogData, ITransport } from "./types.ts";
-import { Queue, sprintf } from "./deps.ts";
-import LevelManager from "./LevelManager.ts";
+import { Queue, sprintf } from './deps.ts';
+import LevelManager from './LevelManager.ts';
+import type { ILogData, ITransport } from './types.ts';
 
 /**
  * A transportation base.
  */
-export default class TransportBase<Levels> extends LevelManager<Levels> implements ITransport<Levels> {
-
+export default class TransportBase<Levels> extends LevelManager<Levels>
+	implements ITransport<Levels> {
 	#init = false;
 	#disp = false;
 
-	public get initialized(): boolean { return this.#init; }
-	public get disposed(): boolean { return this.#disp; }
+	public get initialized(): boolean {
+		return this.#init;
+	}
+	public get disposed(): boolean {
+		return this.#disp;
+	}
 
 	/**
 	 * Check if a value is a valid transport.
 	 * @param value The value to check.
 	 */
 	public static isTransport(value: unknown): boolean {
-		return true
-			&& typeof value === "object"
-			&& value !== null
-			&& typeof (value as { init(): void; }).init === "function"
-			&& typeof (value as { dispose(): void; }).dispose === "function"
-			&& typeof (value as { push(): void; }).push === "function";
+		return true &&
+			typeof value === 'object' &&
+			value !== null &&
+			typeof (value as { init(): void }).init === 'function' &&
+			typeof (value as { dispose(): void }).dispose === 'function' &&
+			typeof (value as { push(): void }).push === 'function';
 	}
 
 	/** A writing queue. */
@@ -50,11 +54,7 @@ export default class TransportBase<Levels> extends LevelManager<Levels> implemen
 	 */
 	public async push(data: ILogData): Promise<unknown | undefined> {
 		if (!this.emits(data.level)) return;
-		return await this._push(
-			async () => await this.handle(
-				await this.dataToByteArray(data)
-			)
-		);
+		return await this._push(async () => await this.handle(await this.dataToByteArray(data)));
 	}
 
 	/**
@@ -71,7 +71,7 @@ export default class TransportBase<Levels> extends LevelManager<Levels> implemen
 	 * @param data The log data.
 	 */
 	public async handle(data: Uint8Array): Promise<void> {
-		throw new Error("<Transport>.handle not implemented!");
+		throw new Error('<Transport>.handle not implemented!');
 	}
 
 	/**
@@ -93,7 +93,6 @@ export default class TransportBase<Levels> extends LevelManager<Levels> implemen
 	 * @param data The log data.
 	 */
 	public dataToString(data: ILogData): Promise<string> | string {
-		return sprintf("%s " + data.message, (this.enum as any)[data.level], ...data.arguments);
+		return sprintf('%s ' + data.message, (this.enum as any)[data.level], ...data.arguments);
 	}
-
 }
