@@ -4,10 +4,14 @@ import { sprintf } from "../lib/deps.ts";
 import {
 	dim,
 	bold,
+	inverse,
 	underline,
+	bgBrightRed,
+	brightCyan,
 	brightMagenta,
 	brightRed,
 	brightYellow,
+	brightWhite,
 	red,
 	blue,
 	cyan,
@@ -20,7 +24,7 @@ import FileTransport from "../lib/FileTransport.ts";
 import TcpTransport from "../lib/TcpTransport.ts";
 
 // An array of colors ordered by the log levels order.
-const colors = [dim, yellow, blue, cyan, brightYellow, red, (str: string) => bold(brightRed(str))];
+const colors = [yellow, yellow, cyan, brightCyan, magenta, red, (str: string) => bgBrightRed(brightWhite(str))];
 const LevelNames = ['trac', 'dbug', 'info', 'note', 'WARN', 'ERR!', 'CRIT'];
 // The log levels that can be used.
 enum LogLevels {
@@ -47,7 +51,7 @@ const noColorFormatter = (data: ILogData) =>
 // A formatter that does use colors.
 const colorFormatter = (data: ILogData) =>
 	`[${_c(data.timestamp.getDate())}${_d}${_c(data.timestamp.getMonth() + 1)}${_d}${_c(data.timestamp.getFullYear())} ${_c(data.timestamp.getHours())}${_t}${_c(data.timestamp.getMinutes())}${_t}${_c(data.timestamp.getSeconds())}] ` +
-	`(${bold(data.name)}) ${colors[data.level](LevelNames[data.level].padEnd(5, " "))} ${sprintf(data.message, ...data.arguments)}`;
+	`(${bold(data.name)}) ${colors[data.level](LevelNames[data.level])} ${sprintf(data.message, ...data.arguments)}`;
 
 // Create a new logger.
 const myLogger = Powerlog.get<typeof LogLevels>({
