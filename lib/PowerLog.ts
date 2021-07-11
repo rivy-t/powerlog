@@ -4,13 +4,15 @@ import TransportBase from './TransportBase.ts';
 import type { ITransport, TFormatter, TLevelMethods, TLogOptions } from './types.ts';
 
 export class LogContainer extends Map<string, PowerLog<unknown>> {
-	constructor() { super(); }
-};
+	constructor() {
+		super();
+	}
+}
 
 /**
  * Default global logger container.
  */
- export const loggers = new LogContainer();
+export const loggers = new LogContainer();
 
 export default class PowerLog<LogLevels> extends LogLevelManager<LogLevels> {
 	/**
