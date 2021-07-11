@@ -54,6 +54,18 @@ export default class PowerLog<LogLevels> extends LogLevelManager<LogLevels> {
 	 */
 	#queue = new Queue();
 
+	#suspensionQueue = new Queue();
+	#suspended = false;
+
+	public suspend() {
+		this.#suspensionQueue.stop();
+		this.#suspended = true;
+	}
+	public resume() {
+		this.#suspended = false;
+		this.#suspensionQueue.start();
+	}
+
 	/** The levels enumerable. */
 	#levels: LogLevels;
 
@@ -86,6 +98,29 @@ export default class PowerLog<LogLevels> extends LogLevelManager<LogLevels> {
 		}
 	}
 
+	private _pushToTransportQueue(
+		logObject: {
+			level: number;
+			message: string;
+			arguments: unknown[];
+			name: string;
+			timestamp: Date;
+		},
+	) {
+		if (!this.emits(logObject.level)) return this;
+		for (const transport of this.#transports) {
+			if (!transport.emits(logObject.level)) continue;
+			this.#queue.push(async () => {
+				try {
+					await transport.push(logObject);
+				} catch (error) {
+					this.onerror.dispatch(error);
+				}
+			});
+		}
+		return this;
+	}
+
 	/**
 	 * Push each transport into the log queue.
 	 * @param level The level of the log entry.
@@ -93,22 +128,18 @@ export default class PowerLog<LogLevels> extends LogLevelManager<LogLevels> {
 	 * @param args The
 	 */
 	private _push(level: number, message: string, args: unknown[]): this {
-		if (!this.emits(level)) return this;
-
-		// Must be defined here so all transports have an
-		// equal timestamp.
+		// Must be defined here so all transports have an equal timestamp.
 		const t = new Date();
+		const logRecord = { level, message, arguments: args, name: this.name, timestamp: t };
 
-		for (const transport of this.#transports) {
-			if (!transport.emits(level)) continue;
-			this.#queue.push(async () => {
-				try {
-					await transport.push({ level, message, arguments: args, name: this.name, timestamp: t });
-				} catch (error) {
-					this.onerror.dispatch(error);
-				}
+		if (this.#suspended) {
+			this.#suspensionQueue.push(async () => {
+				this._pushToTransportQueue(logRecord);
 			});
+		} else {
+			this._pushToTransportQueue(logRecord);
 		}
+
 		return this;
 	}
 
