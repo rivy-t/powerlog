@@ -1,10 +1,12 @@
 # Powerlog
 
+<!-- spell-checker:ignore () Powerlog Deno sprintf -->
+
 > A logger for Deno that sends your logs wherever you want them.
 
 ## Getting Started
 
-Firstly,
+First,
 
 You need to import the module into your project.
 
@@ -12,36 +14,36 @@ You need to import the module into your project.
 import { Powerlog } from 'https://deno.land/x/powerlog/mod.ts';
 ```
 
-Secondly,
+Second,
 
 You should import any built-in transports you want to use.
 
 ```ts
 import {
-	DiscordWebhookTransport, // For sending discord webhook messages.
-	FileTransport, // For appending to a file.
-	StdTransport, // For writing to stdout or stderr.
-	TcpTransport, // For sending logs over a tcp connection or unix sock.
-	WriterTransport, // For writing to an async writer (an object that has .write).
+  DiscordWebhookTransport, // For sending discord webhook messages.
+  FileTransport, // For appending to a file.
+  StdTransport, // For writing to stdout or stderr.
+  TcpTransport, // For sending logs over a tcp connection or unix sock.
+  WriterTransport, // For writing to an async writer (an object that has .write).
 } from 'https://deno.land/x/powerlog/mod.ts';
 ```
 
-Thirdly,
+Third,
 
 You need a log levels enumerable.
 
 ```ts
 enum MyLogLevels {
-	debug,
-	info,
-	success,
-	alert,
-	warn,
-	critical,
+  debug,
+  info,
+  success,
+  alert,
+  warn,
+  critical,
 }
 ```
 
-Fourthly,
+Fourth,
 
 You need to create a new powerlog instance.
 
@@ -49,7 +51,7 @@ You need to create a new powerlog instance.
 const myLogger = Powerlog.get({ levels: MyLogLevels, name: 'My Logger' });
 ```
 
-Fifthly,
+Fifth,
 
 You can now also create the transports you wish to use.
 
@@ -61,7 +63,7 @@ const myStdoutTransport = new StdTransport({ levels: MyLogLevels });
 const myFileTransport = new FileTransport({ levels: MyLogLevels, filename: 'my.log' });
 ```
 
-Sixthly,
+Sixth,
 
 Add the transports to your logger.
 
@@ -69,9 +71,9 @@ Add the transports to your logger.
 await myLogger.use(myStdoutTransport, myFileTransport);
 ```
 
-Seventhly,
+Seventh,
 
-You can now use any of the properties in `MyLogLevels` as loggging methods.
+You can now use any of the properties in `MyLogLevels` as logging methods.
 
 ```ts
 myLogger.debug('Hello World');
@@ -93,7 +95,7 @@ When creating transports you will have the ability to add formatting to your mes
 
 The default formatting applies to `FormatTransportBase`, `FileTransport`, `StdTransport` and `TcpTransport`.
 
-You can on either of these's constructors add a formatting property which is a function that returns either a `string` or a `Uint8Array`, it can be both synchronous and asynchronous.
+You can, with either of these constructors, add a formatting property which is a function that returns either a `string` or a `Uint8Array`, it can be both synchronous and asynchronous.
 
 **Example**:
 

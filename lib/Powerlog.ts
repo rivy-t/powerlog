@@ -1,4 +1,5 @@
-// Imports
+// spell-checker:ignore () Powerlog
+
 import { Event, Queue } from './deps.ts';
 import LevelManager from './LevelManager.ts';
 import TransportBase from './TransportBase.ts';
@@ -138,7 +139,7 @@ export default class Powerlog<Levels> extends LevelManager<Levels> {
 	 *
 	 * @param transports The transports.
 	 */
-	public async unuse(...transports: ITransport<Levels>[]) {
+	public async remove(...transports: ITransport<Levels>[]) {
 		for (const transport of transports) {
 			if (!this.#transports.has(transport)) continue;
 			if (!transport.disposed && transport.initialized) {

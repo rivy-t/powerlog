@@ -1,4 +1,5 @@
-// Imports
+// spell-checker:ignore () Powerlog sprintf trac dbug Deno
+
 import {
 	bgBrightRed,
 	blue,
