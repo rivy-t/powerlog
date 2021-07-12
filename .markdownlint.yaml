@@ -1,0 +1,33 @@
+# MarkdownLint configuration
+# ref: <https://github.com/DavidAnson/markdownlint/blob/f87f9d080002281d96ac32f119d8c99c028a6ddb/schema/.markdownlint.yaml>
+
+# spell-checker:ignore (utils) dprint
+
+# MD010/no-hard-tabs - Hard tabs
+no-hard-tabs:
+  # include code blocks?
+  # * `dprint` (up to at least 0.15.0) uses TABs for indentation within Markdown code blocks
+  code_blocks: false
+
+
+# MD013/line-length - Line length
+line-length:
+  # Number of characters
+  # line_length: 80
+  line_length: 99999
+  # # Number of characters for headings
+  # heading_line_length: 80
+  # # Number of characters for code blocks
+  code_block_line_length: 100
+  # Include code blocks
+  # code_blocks: true
+  # # Include tables
+  # tables: true
+  # # Include headings
+  # headings: true
+  # # Include headings
+  # headers: true
+  # # Strict length checking
+  # strict: false
+  # # Stern length checking
+  # stern: false
