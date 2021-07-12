@@ -34,9 +34,9 @@ const defaultLogLevelColors = [
 	cyan,
 	magenta,
 	red,
-	(str: string) => bgBrightRed(brightWhite(str)),
+	(s: string) => bgBrightRed(brightWhite(s)),
 ];
-const defaultLogLevelLabels = ['trac', 'dbug', 'info', 'note', 'WARN', 'ERR!', 'CRIT'];
+const defaultLogLevelLabels = ['trac', 'dbug', 'info', 'Note', 'WARN', 'ERR!', 'CRIT'];
 // The log levels that can be used.
 enum defaultLogLevels {
 	trace,
@@ -86,11 +86,19 @@ const myLogger = PowerLog.get<typeof defaultLogLevels>({
 	formatter: noColorFormatter,
 });
 
+myLogger.suspend();
+
 const TcpConnection = await (async () => {
 	try {
-		return await Deno.connect({ port: 8080, /* hostname: '127.0.0.1', */ transport: 'tcp' });
+		const timeout = new Promise((_resolve, reject) => {
+			setTimeout(reject, 250);
+		});
+		return await Promise.race([
+			timeout,
+			Deno.connect({ port: 8080, /* hostname: '127.0.0.1', */ transport: 'tcp' }),
+		]) as any as (Deno.Writer & Deno.Closer) | undefined;
 	} catch {
-		console.warn('Unable to connect to "http://127.0.0.1:8080"');
+		myLogger.warn('Unable to connect to "http://127.0.0.1:8080"');
 		return undefined;
 	}
 })();
@@ -121,6 +129,8 @@ if (TcpConnection) {
 		}),
 	);
 }
+
+myLogger.resume();
 
 // Log some stuff.
 myLogger
