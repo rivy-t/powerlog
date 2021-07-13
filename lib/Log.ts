@@ -1,9 +1,21 @@
+// spell-checker:ignore (func) sprintf
+
 import { Event, Queue } from './deps.ts';
 import LogLevelManager from './LogLevelManager.ts';
 import TransportBase from './TransportBase.ts';
 import type { ITransport, TFormatter, TLevelMethods, TLogOptions } from './types.ts';
 
-export class LogContainer extends Map<string, PowerLog<unknown>> {
+import * as Colors from 'https://deno.land/std@0.79.0/fmt/colors.ts';
+
+// import ConsoleTransport from '../lib/ConsoleTransport.ts';
+import { sprintf } from '../lib/deps.ts';
+// import FileTransport from '../lib/FileTransport.ts';
+// import PowerLog from '../lib/Log.ts';
+// import TcpTransport from '../lib/TcpTransport.ts';
+import type { ILogData } from '../lib/types.ts';
+// import WriterTransport from '../lib/WriterTransport.ts';
+
+export class Container extends Map<string, PowerLog<any> & TLevelMethods<any>> {
 	constructor() {
 		super();
 	}
@@ -12,9 +24,9 @@ export class LogContainer extends Map<string, PowerLog<unknown>> {
 /**
  * Default global logger container.
  */
-export const loggers = new LogContainer();
+export const loggers = new Container();
 
-export default class PowerLog<LogLevels> extends LogLevelManager<LogLevels> {
+export class PowerLog<LogLevels> extends LogLevelManager<LogLevels> {
 	/**
 	 * This is a static method used to create a new
 	 * PowerLog instance. It is most recommended to use
@@ -220,3 +232,64 @@ export default class PowerLog<LogLevels> extends LogLevelManager<LogLevels> {
 		}
 	}
 }
+
+// An array of colors ordered by the log levels order.
+const defaultLogLevelColors = [
+	Colors.yellow,
+	Colors.yellow,
+	Colors.brightBlue,
+	Colors.cyan,
+	Colors.magenta,
+	Colors.red,
+	(s: string) => Colors.bgBrightRed(Colors.brightWhite(s)),
+];
+const defaultLogLevelLabels = ['trac', 'dbug', 'info', 'Note', 'WARN', 'ERR!', 'CRIT']; // spell-checker:ignore (labels) dbug trac
+
+export enum defaultLogLevels {
+	trace,
+	debug,
+	info,
+	notice,
+	warn,
+	error,
+	critical,
+}
+
+// Formatting help.
+const _n = (n: number | string) => n.toString().padStart(2, '0');
+const _c = (n: number | string) => Colors.magenta(_n(n));
+const _d = Colors.dim('/');
+const _t = Colors.dim(':');
+
+// A formatter that doesn't use colors.
+export const noColorFormatter = (data: ILogData) =>
+	`[${_n(data.timestamp.getDate())}/${
+		_n(data.timestamp.getMonth() + 1)
+	}/${data.timestamp.getFullYear()} ${_n(data.timestamp.getHours())}:${
+		_n(data.timestamp.getMinutes())
+	}:${_n(data.timestamp.getSeconds())}] ` +
+	`(${data.name}) ${defaultLogLevelLabels[data.level]} ${
+		sprintf(
+			data.message,
+			...data.arguments,
+		)
+	}`;
+
+// A formatter that does use colors.
+export const colorFormatter = (data: ILogData) =>
+	`[${_c(data.timestamp.getDate())}${_d}${_c(data.timestamp.getMonth() + 1)}${_d}${
+		_c(data.timestamp.getFullYear())
+	} ${_c(data.timestamp.getHours())}${_t}${_c(data.timestamp.getMinutes())}${_t}${
+		_c(data.timestamp.getSeconds())
+	}] ` +
+	`(${Colors.bold(data.name)}) ${
+		defaultLogLevelColors[data.level](defaultLogLevelLabels[data.level])
+	} ${sprintf(data.message, ...data.arguments)}`;
+
+export const logger = PowerLog.get<typeof defaultLogLevels>({
+	levels: defaultLogLevels,
+	name: 'default',
+	formatter: noColorFormatter,
+});
+
+loggers.set('default', logger);

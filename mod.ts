@@ -4,8 +4,8 @@ export { default as DiscordWebhookTransport } from './lib/DiscordWebhookTranspor
 export * from './lib/DiscordWebhookTransport.ts';
 export { default as FileTransport } from './lib/FileTransport.ts';
 export { default as FormatTransportBase } from './lib/FormatTransportBase.ts';
+export * as PowerLog from './lib/Log.ts';
 export { default as LogLevelManager } from './lib/LogLevelManager.ts';
-export { default as PowerLog } from './lib/PowerLog.ts';
 export { default as TcpTransport } from './lib/TcpTransport.ts';
 export { default as TransportBase } from './lib/TransportBase.ts';
 export * from './lib/types.ts';

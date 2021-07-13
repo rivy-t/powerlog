@@ -1,6 +1,6 @@
 // spell-checker:ignore () Deno
 
-import PowerLog from './PowerLog.ts';
+import * as PowerLog from './Log.ts';
 
 /**
  * A level emitter manager to enable or disable certain
@@ -85,7 +85,7 @@ export type TLevelMethods<LogLevels> = {
 	[key in keyof LogLevels]: (
 		message: string,
 		...args: unknown[]
-	) => PowerLog<LogLevels> & TLevelMethods<LogLevels>;
+	) => PowerLog.PowerLog<LogLevels> & TLevelMethods<LogLevels>;
 };
 
 export type TFormatter = (data: ILogData) => Promise<string | Uint8Array> | string | Uint8Array;

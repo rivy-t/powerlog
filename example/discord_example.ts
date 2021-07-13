@@ -2,7 +2,7 @@
 
 import { sprintf } from '../lib/deps.ts';
 import DiscordWebhookTransport from '../lib/DiscordWebhookTransport.ts';
-import PowerLog from '../lib/PowerLog.ts';
+import { PowerLog } from '../lib/Log.ts';
 
 enum LogLevels {
 	debug,

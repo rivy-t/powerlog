@@ -21,7 +21,7 @@ import {
 import ConsoleTransport from '../lib/ConsoleTransport.ts';
 import { sprintf } from '../lib/deps.ts';
 import FileTransport from '../lib/FileTransport.ts';
-import PowerLog from '../lib/PowerLog.ts';
+import { PowerLog } from '../lib/Log.ts';
 import TcpTransport from '../lib/TcpTransport.ts';
 import type { ILogData } from '../lib/types.ts';
 import WriterTransport from '../lib/WriterTransport.ts';
