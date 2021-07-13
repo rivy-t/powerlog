@@ -1,6 +1,6 @@
 # Powerlog
 
-<!-- spell-checker:ignore () PowerLog Deno sprintf markdownlint -->
+<!-- spell-checker:ignore () PowerLog Deno dprint sprintf -->
 
 > A logger for Deno that sends your logs wherever you want them.
 
@@ -99,9 +99,16 @@ You can, with either of these constructors, add a formatting property which is a
 
 **Example**:
 
+<!-- dprint-ignore-start -->
+
 ```ts
-const transport = new ConsoleTransport({ formatter: (data) => `[${data.timestamp.toJSON()}] (${data.name}) ${MyLogLevels[data.level]} ${sprintf(data.message, ...data.arguments)}` });
+const transport = new ConsoleTransport({
+  formatter: (data) =>
+    `[${data.timestamp.toJSON()}] (${data.name}) ${MyLogLevels[data.level]} ${sprintf(data.message, ...data.arguments)}`
+  });
 ```
+
+<!-- dprint-ignore-stop -->
 
 You can also change the formatter later on with the use `<FormatTransportBase>.format(formatter)`.
 
@@ -115,9 +122,18 @@ You can also apply a default format on the powerlog instance the same way as abo
 
 **Example**:
 
+<!-- dprint-ignore-start -->
+
 ```ts
-const myLogger = new Powerlog({ levels: MyLogLevels, name: 'My Logger', formatter: (data) => `[${data.timestamp.toJSON()}] (${data.name}) ${MyLogLevels[data.level]} ${sprintf(data.message, ...data.arguments)}` });
+const myLogger = new Powerlog({
+  levels: MyLogLevels,
+  name: 'My Logger',
+  formatter: (data) =>
+    `[${data.timestamp.toJSON()}] (${data.name}) ${MyLogLevels[data.level]} ${sprintf(data.message, ...data.arguments)}`
+  });
 ```
+
+<!-- dprint-ignore-stop -->
 
 You can then also later change the default formatter by using `<Powerlog>.format(formatter)`.
 
@@ -140,8 +156,22 @@ import { DiscordWebhookTransport } from 'https://deno.land/x/powerlog/mod.ts';
 
 **Example**:
 
+<!-- dprint-ignore-start -->
+
 ```ts
-const myDiscordWebhookTransport = new DiscordWebhookTransport({ levels: MyLogLevels, url: 'webhook url', formatter: (data) => ({ content: null, embeds: [{ title: MyLogLevels[data.level], description: sprintf(data.message, ...data.arguments), timestamp: data.timestamp.toJSON() }] }) });
+const myDiscordWebhookTransport = new DiscordWebhookTransport({
+  levels: MyLogLevels,
+  url: 'webhook url',
+  formatter: (data) => ({
+    content: null,
+    embeds: [{
+      title: MyLogLevels[data.level],
+      description: sprintf(data.message, ...data.arguments),
+      timestamp: data.timestamp.toJSON()
+      }]
+    })
+  });
 ```
+<!-- dprint-ignore-stop -->
 
 Again, this can later be changed using `<DiscordWebhookTransport>.format(formatter)`.
