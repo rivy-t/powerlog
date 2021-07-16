@@ -56,7 +56,7 @@ logger.resume();
 // Log some stuff.
 logger
 	.log('info', 'log/info Hello')
-	.trace({ TcpConnection })
+	// .trace({ TcpConnection })
 	.debug('Hello %s', 'World')
 	.info('Hello %s', 'World')
 	.notice('Hello %s', 'World')

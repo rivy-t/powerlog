@@ -20,10 +20,14 @@ export class Container extends Map<string, PowerLog<any> & TLevelMethods<any>> {
 		super();
 	}
 }
+
+export type LL<LogLevel> = Set<keyof LogLevel>;
+
 export interface LogRecordOptions<LogLevel> {
   msg: string;
   args: unknown[];
   level: LogLevel;
+  levelSet: Set<LogLevel>;
   loggerName: string;
 }
 
