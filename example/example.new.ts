@@ -31,19 +31,19 @@ await logger.use(
 	// 	.disable(defaultLogLevel.critical, defaultLogLevel.debug),
 	// A stderr transport.
 	new ConsoleTransport({
-		levels: PowerLog.defaultLogLevel,
+		levels: PowerLog.logLevels.$default,
 		formatter: PowerLog.colorFormatter,
 		std: 'err',
 		// enabled: [defaultLogLevel.critical],
 	}),
 	// Create a file transport.
-	new FileTransport({ levels: PowerLog.defaultLogLevel, filename: 'myLogs.log' }),
+	new FileTransport({ levels: PowerLog.logLevels.$default, filename: 'myLogs.log' }),
 );
 
 if (TcpConnection) {
 	await logger.use(
 		new WriterTransport({
-			levels: PowerLog.defaultLogLevel,
+			levels: PowerLog.logLevels.$default,
 			stream: TcpConnection,
 			close: true,
 			formatter: PowerLog.colorFormatter,
