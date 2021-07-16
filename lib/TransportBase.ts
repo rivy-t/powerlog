@@ -6,8 +6,8 @@ import type { ILogData, ITransport } from './types.ts';
 /**
  * A transportation base.
  */
-export default class TransportBase<LogLevels> extends LogLevelManager<LogLevels>
-	implements ITransport<LogLevels> {
+export default class TransportBase<LogLevel> extends LogLevelManager<LogLevel>
+	implements ITransport<LogLevel> {
 	#init = false;
 	#disp = false;
 

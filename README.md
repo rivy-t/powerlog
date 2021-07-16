@@ -33,7 +33,7 @@ Third,
 You need a log levels enumerable.
 
 ```ts
-enum MyLogLevels {
+enum MyLogLevel {
 	debug,
 	info,
 	success,
@@ -48,7 +48,7 @@ Fourth,
 You need to create a new powerlog instance.
 
 ```ts
-const myLogger = Powerlog.get({ levels: MyLogLevels, name: 'My Logger' });
+const myLogger = Powerlog.get({ levels: MyLogLevel, name: 'My Logger' });
 ```
 
 Fifth,
@@ -56,11 +56,11 @@ Fifth,
 You can now also create the transports you wish to use.
 
 ```ts
-const myStdoutTransport = new ConsoleTransport({ levels: MyLogLevels });
+const myStdoutTransport = new ConsoleTransport({ levels: MyLogLevel });
 ```
 
 ```ts
-const myFileTransport = new FileTransport({ levels: MyLogLevels, filename: 'my.log' });
+const myFileTransport = new FileTransport({ levels: MyLogLevel, filename: 'my.log' });
 ```
 
 Sixth,
@@ -73,7 +73,7 @@ await myLogger.use(myStdoutTransport, myFileTransport);
 
 Seventh,
 
-You can now use any of the properties in `MyLogLevels` as logging methods.
+You can now use any of the properties in `MyLogLevel` as logging methods.
 
 ```ts
 myLogger.debug('Hello World');
@@ -104,7 +104,7 @@ You can, with either of these constructors, add a formatting property which is a
 ```ts
 const transport = new ConsoleTransport({
   formatter: (data) =>
-    `[${data.timestamp.toJSON()}] (${data.name}) ${MyLogLevels[data.level]} ${sprintf(data.message, ...data.arguments)}`
+    `[${data.timestamp.toJSON()}] (${data.name}) ${MyLogLevel[data.level]} ${sprintf(data.message, ...data.arguments)}`
   });
 ```
 
@@ -115,7 +115,7 @@ You can also change the formatter later on with the use `<FormatTransportBase>.f
 **Example**:
 
 ```ts
-transport.format((data) => `${MyLogLevels[data.level]} ${sprintf(data.message, ...data.arguments)}`);
+transport.format((data) => `${MyLogLevel[data.level]} ${sprintf(data.message, ...data.arguments)}`);
 ```
 
 You can also apply a default format on the powerlog instance the same way as above. When adding transports with no formatters to a powerlog instance with a default formatter the powerlog instance will try to apply the default formatter onto the transports on initialization.
@@ -126,10 +126,10 @@ You can also apply a default format on the powerlog instance the same way as abo
 
 ```ts
 const myLogger = new Powerlog({
-  levels: MyLogLevels,
+  levels: MyLogLevel,
   name: 'My Logger',
   formatter: (data) =>
-    `[${data.timestamp.toJSON()}] (${data.name}) ${MyLogLevels[data.level]} ${sprintf(data.message, ...data.arguments)}`
+    `[${data.timestamp.toJSON()}] (${data.name}) ${MyLogLevel[data.level]} ${sprintf(data.message, ...data.arguments)}`
   });
 ```
 
@@ -142,7 +142,7 @@ You can then also later change the default formatter by using `<Powerlog>.format
 **Example**:
 
 ```ts
-myLogger.format((data) => `${MyLogLevels[data.level]} ${sprintf(data.message, ...data.arguments)}`);
+myLogger.format((data) => `${MyLogLevel[data.level]} ${sprintf(data.message, ...data.arguments)}`);
 ```
 
 ### Discord Formatting
@@ -160,12 +160,12 @@ import { DiscordWebhookTransport } from 'https://deno.land/x/powerlog/mod.ts';
 
 ```ts
 const myDiscordWebhookTransport = new DiscordWebhookTransport({
-  levels: MyLogLevels,
+  levels: MyLogLevel,
   url: 'webhook url',
   formatter: (data) => ({
     content: null,
     embeds: [{
-      title: MyLogLevels[data.level],
+      title: MyLogLevel[data.level],
       description: sprintf(data.message, ...data.arguments),
       timestamp: data.timestamp.toJSON()
       }]

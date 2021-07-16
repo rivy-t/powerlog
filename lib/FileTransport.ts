@@ -6,7 +6,7 @@ import WriterTransport from './WriterTransport.ts';
 /**
  * A transport that pushes logs to a file.
  */
-export default class FileTransport<LogLevels> extends WriterTransport<LogLevels> {
+export default class FileTransport<LogLevel> extends WriterTransport<LogLevel> {
 	/** The filename to write to. */
 	#filename: string;
 
@@ -17,7 +17,7 @@ export default class FileTransport<LogLevels> extends WriterTransport<LogLevels>
 	 * Create a new file transport.
 	 * @param options The file transport options.
 	 */
-	public constructor(options: TFileTransportOptions<LogLevels>) {
+	public constructor(options: TFileTransportOptions<LogLevel>) {
 		super(options);
 		this.#filename = options.filename;
 		if (options.reset === true) {

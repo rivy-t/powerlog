@@ -6,12 +6,12 @@ import WriterTransport from './WriterTransport.ts';
 /**
  * A transport that uses either stdout or stderr.
  */
-export default class ConsoleTransport<LogLevels> extends WriterTransport<LogLevels> {
+export default class ConsoleTransport<LogLevel> extends WriterTransport<LogLevel> {
 	/**
 	 * Create a new std transport.
 	 * @param options The std transport options.
 	 */
-	public constructor(options: TConsoleTransportOptions<LogLevels>) {
+	public constructor(options: TConsoleTransportOptions<LogLevel>) {
 		let stream: Deno.Writer & Deno.Closer;
 		if (options.std === 'out' || options.std === null || options.std === undefined) {
 			stream = Deno.stdout;

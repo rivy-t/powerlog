@@ -27,23 +27,23 @@ const TcpConnection = await (async () => {
 // Create and use transports.
 await logger.use(
 	// // A stdout transport.
-	// new ConsoleTransport({ levels: defaultLogLevels, formatter: colorFormatter }) // Disable 'critical' and 'debug' log levels.
-	// 	.disable(defaultLogLevels.critical, defaultLogLevels.debug),
+	// new ConsoleTransport({ levels: defaultLogLevel, formatter: colorFormatter }) // Disable 'critical' and 'debug' log levels.
+	// 	.disable(defaultLogLevel.critical, defaultLogLevel.debug),
 	// A stderr transport.
 	new ConsoleTransport({
-		levels: PowerLog.defaultLogLevels,
+		levels: PowerLog.defaultLogLevel,
 		formatter: PowerLog.colorFormatter,
 		std: 'err',
-		// enabled: [defaultLogLevels.critical],
+		// enabled: [defaultLogLevel.critical],
 	}),
 	// Create a file transport.
-	new FileTransport({ levels: PowerLog.defaultLogLevels, filename: 'myLogs.log' }),
+	new FileTransport({ levels: PowerLog.defaultLogLevel, filename: 'myLogs.log' }),
 );
 
 if (TcpConnection) {
 	await logger.use(
 		new WriterTransport({
-			levels: PowerLog.defaultLogLevels,
+			levels: PowerLog.defaultLogLevel,
 			stream: TcpConnection,
 			close: true,
 			formatter: PowerLog.colorFormatter,
@@ -56,7 +56,7 @@ logger.resume();
 // Log some stuff.
 logger
 	.log('info', 'log/info Hello')
-	.trace('Hello %s', 'World')
+	.trace({ TcpConnection })
 	.debug('Hello %s', 'World')
 	.info('Hello %s', 'World')
 	.notice('Hello %s', 'World')

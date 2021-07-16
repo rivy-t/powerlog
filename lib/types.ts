@@ -2,33 +2,35 @@
 
 import * as PowerLog from './Log.ts';
 
+export type GenericFunction = (...args: any[]) => any;
+
 /**
  * A level emitter manager to enable or disable certain
  * levels after construction.
  */
-export interface ILevelEmitter<LogLevels> {
+export interface ILevelEmitter<LogLevel> {
 	/**
 	 * The levels that are emitted.
 	 */
-	levels: number | keyof LogLevels;
+	levels: number | keyof LogLevel;
 
 	/**
 	 * Enable one or more levels.
 	 * @param levels The levels to enable.
 	 */
-	enable(...levels: (keyof LogLevels | number)[]): any;
+	enable(...levels: (keyof LogLevel | number)[]): any;
 
 	/**
 	 * Disable one or more levels.
 	 * @param levels The levels to disable.
 	 */
-	disable(...levels: (keyof LogLevels | number)[]): any;
+	disable(...levels: (keyof LogLevel | number)[]): any;
 
 	/**
 	 * Check whether one or more levels are emitted.
 	 * @param levels The levels to check.
 	 */
-	emits(...levels: (keyof LogLevels | number)[]): boolean;
+	emits(...levels: (keyof LogLevel | number)[]): boolean;
 }
 
 export type TMessage = string;
@@ -60,7 +62,7 @@ export interface ILogData {
 /**
  * A way to transfer information to a destination.
  */
-export interface ITransport<LogLevels> extends ILevelEmitter<LogLevels> {
+export interface ITransport<LogLevel> extends ILevelEmitter<LogLevel> {
 	/**
 	 * Initialize the transport.
 	 */
@@ -81,33 +83,33 @@ export interface ITransport<LogLevels> extends ILevelEmitter<LogLevels> {
 	disposed: boolean;
 }
 
-export type TLevelMethods<LogLevels> = {
-	[key in keyof LogLevels]: (
+export type TLevelMethods<LogLevel> = {
+	[key in keyof LogLevel]: (
 		message: string,
 		...args: unknown[]
-	) => PowerLog.PowerLog<LogLevels> & TLevelMethods<LogLevels>;
+	) => PowerLog.PowerLog<LogLevel> & TLevelMethods<LogLevel>;
 };
 
 export type TFormatter = (data: ILogData) => Promise<string | Uint8Array> | string | Uint8Array;
 
-export type TFormatTransportBaseOptions<LogLevels> = {
-	levels: LogLevels;
-	enabled?: (number | keyof LogLevels)[] | -1;
+export type TFormatTransportBaseOptions<LogLevel> = {
+	levels: LogLevel;
+	enabled?: (number | keyof LogLevel)[] | -1;
 	formatter?: TFormatter;
 };
 
-export type TWriterTransportOptions<LogLevels> = TFormatTransportBaseOptions<LogLevels> & {
+export type TWriterTransportOptions<LogLevel> = TFormatTransportBaseOptions<LogLevel> & {
 	stream?: Deno.Writer & Deno.Closer;
 	close?: boolean;
 };
 
-export type TFileTransportOptions<LogLevels> = TFormatTransportBaseOptions<LogLevels> & {
+export type TFileTransportOptions<LogLevel> = TFormatTransportBaseOptions<LogLevel> & {
 	filename: string;
 	reset?: boolean;
 };
 
-export type TConsoleTransportOptions<LogLevels> = TFormatTransportBaseOptions<LogLevels> & {
+export type TConsoleTransportOptions<LogLevel> = TFormatTransportBaseOptions<LogLevel> & {
 	std?: 'out' | 'err';
 };
 
-export type TLogOptions<LogLevels> = TFormatTransportBaseOptions<LogLevels> & { name: string };
+export type TLogOptions<LogLevel> = TFormatTransportBaseOptions<LogLevel> & { name: string };

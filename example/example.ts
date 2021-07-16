@@ -38,7 +38,7 @@ const defaultLogLevelColors = [
 ];
 const defaultLogLevelLabels = ['trac', 'dbug', 'info', 'Note', 'WARN', 'ERR!', 'CRIT'];
 // The log levels that can be used.
-enum defaultLogLevels {
+enum defaultLogLevel {
 	trace,
 	debug,
 	info,
@@ -80,8 +80,8 @@ const colorFormatter = (data: ILogData) =>
 	}`;
 
 // Create a new logger.
-const myLogger = PowerLog.get<typeof defaultLogLevels>({
-	levels: defaultLogLevels,
+const myLogger = PowerLog.get<typeof defaultLogLevel>({
+	levels: defaultLogLevel,
 	name: 'myLogger',
 	formatter: noColorFormatter,
 });
@@ -106,23 +106,23 @@ const TcpConnection = await (async () => {
 // Create and use transports.
 await myLogger.use(
 	// // A stdout transport.
-	// new ConsoleTransport({ levels: defaultLogLevels, formatter: colorFormatter }) // Disable 'critical' and 'debug' log levels.
-	// 	.disable(defaultLogLevels.critical, defaultLogLevels.debug),
+	// new ConsoleTransport({ levels: defaultLogLevel, formatter: colorFormatter }) // Disable 'critical' and 'debug' log levels.
+	// 	.disable(defaultLogLevel.critical, defaultLogLevel.debug),
 	// A stderr transport.
 	new ConsoleTransport({
-		levels: defaultLogLevels,
+		levels: defaultLogLevel,
 		formatter: colorFormatter,
 		std: 'err',
-		// enabled: [defaultLogLevels.critical],
+		// enabled: [defaultLogLevel.critical],
 	}),
 	// Create a file transport.
-	new FileTransport({ levels: defaultLogLevels, filename: 'myLogs.log' }),
+	new FileTransport({ levels: defaultLogLevel, filename: 'myLogs.log' }),
 );
 
 if (TcpConnection) {
 	await myLogger.use(
 		new WriterTransport({
-			levels: defaultLogLevels,
+			levels: defaultLogLevel,
 			stream: TcpConnection,
 			close: true,
 			formatter: colorFormatter,

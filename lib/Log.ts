@@ -3,7 +3,7 @@
 import { Event, Queue } from './deps.ts';
 import LogLevelManager from './LogLevelManager.ts';
 import TransportBase from './TransportBase.ts';
-import type { ITransport, TFormatter, TLevelMethods, TLogOptions } from './types.ts';
+import type { GenericFunction, ITransport, TFormatter, TLevelMethods, TLogOptions } from './types.ts';
 
 import * as Colors from 'https://deno.land/std@0.79.0/fmt/colors.ts';
 
@@ -20,13 +20,43 @@ export class Container extends Map<string, PowerLog<any> & TLevelMethods<any>> {
 		super();
 	}
 }
+export interface LogRecordOptions<LogLevel> {
+  msg: string;
+  args: unknown[];
+  level: LogLevel;
+  loggerName: string;
+}
+
+export class LogRecord<LogLevel> {
+  readonly msg: string;
+  #args: unknown[];
+  #dateTime: Date;
+  readonly level: LogLevel;
+  // readonly levelName: string;
+  readonly loggerName: string;
+
+  constructor(options: LogRecordOptions<LogLevel>) {
+    this.msg = options.msg;
+    this.#args = [...options.args];
+    this.level = options.level;
+    this.loggerName = options.loggerName;
+    this.#dateTime = new Date();
+    // this.levelName = getLevelName(options.level);
+  }
+  get args(): unknown[] {
+    return [...this.#args];
+  }
+  get dateTime(): Date {
+    return new Date(this.#dateTime.getTime());
+  }
+}
 
 /**
  * Default global logger container.
  */
 export const loggers = new Container();
 
-export class PowerLog<LogLevels> extends LogLevelManager<LogLevels> {
+export class PowerLog<LogLevel> extends LogLevelManager<LogLevel> {
 	/**
 	 * This is a static method used to create a new
 	 * PowerLog instance. It is most recommended to use
@@ -38,13 +68,13 @@ export class PowerLog<LogLevels> extends LogLevelManager<LogLevels> {
 	 * will be typed.
 	 * @param options The PowerLog options.
 	 */
-	public static get<LogLevels>(
-		options: TLogOptions<LogLevels>,
-	): PowerLog<LogLevels> & TLevelMethods<LogLevels> {
+	public static get<LogLevel>(
+		options: TLogOptions<LogLevel>,
+	): PowerLog<LogLevel> & TLevelMethods<LogLevel> {
 		if (loggers.has(options.name)) {
 			const logger = loggers.get(options.name)!;
 			if (logger.enum !== options.levels) {
-				throw new Error('LogLevels between existing PowerLog and requested PowerLog mismatch!');
+				throw new Error('LogLevel between existing PowerLog and requested PowerLog mismatch!');
 			}
 			if (options.formatter) {
 				logger.format(options.formatter);
@@ -79,13 +109,13 @@ export class PowerLog<LogLevels> extends LogLevelManager<LogLevels> {
 	}
 
 	/** The levels enumerable. */
-	#levels: LogLevels;
+	#levels: LogLevel;
 
 	/** A default formatter to apply to new transports. */
 	#defaultFormatter?: TFormatter;
 
 	/** Transports to send log entries to. */
-	#transports = new Set<ITransport<LogLevels>>();
+	#transports = new Set<ITransport<LogLevel>>();
 
 	/** The name of this logger. */
 	public readonly name: string;
@@ -98,7 +128,7 @@ export class PowerLog<LogLevels> extends LogLevelManager<LogLevels> {
 	 * typings to the level methods created by PowerLog.
 	 * @param options The PowerLog options.
 	 */
-	public constructor(options: TLogOptions<LogLevels>) {
+	public constructor(options: TLogOptions<LogLevel>) {
 		super(options.levels, options.enabled);
 		this.#levels = options.levels;
 		this.#defaultFormatter = options.formatter;
@@ -159,7 +189,7 @@ export class PowerLog<LogLevels> extends LogLevelManager<LogLevels> {
 	 * Add an initialize transports to this instance.
 	 * @param transports The transports.
 	 */
-	public async use(...transports: ITransport<LogLevels>[]) {
+	public async use(...transports: ITransport<LogLevel>[]) {
 		for (const transport of transports) {
 			if (!TransportBase.isTransport(transport)) {
 				throw new Error('Not a transport!');
@@ -189,7 +219,7 @@ export class PowerLog<LogLevels> extends LogLevelManager<LogLevels> {
 	 *
 	 * @param transports The transports.
 	 */
-	public async remove(...transports: ITransport<LogLevels>[]) {
+	public async remove(...transports: ITransport<LogLevel>[]) {
 		for (const transport of transports) {
 			if (!this.#transports.has(transport)) continue;
 			if (!transport.disposed && transport.initialized) {
@@ -245,7 +275,7 @@ const defaultLogLevelColors = [
 ];
 const defaultLogLevelLabels = ['trac', 'dbug', 'info', 'Note', 'WARN', 'ERR!', 'CRIT']; // spell-checker:ignore (labels) dbug trac
 
-export enum defaultLogLevels {
+export enum defaultLogLevel {
 	trace,
 	debug,
 	info,
@@ -286,8 +316,8 @@ export const colorFormatter = (data: ILogData) =>
 		defaultLogLevelColors[data.level](defaultLogLevelLabels[data.level])
 	} ${sprintf(data.message, ...data.arguments)}`;
 
-export const logger = PowerLog.get<typeof defaultLogLevels>({
-	levels: defaultLogLevels,
+export const logger = PowerLog.get<typeof defaultLogLevel>({
+	levels: defaultLogLevel,
 	name: 'default',
 	formatter: noColorFormatter,
 });

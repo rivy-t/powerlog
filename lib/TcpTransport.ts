@@ -6,7 +6,7 @@ import WriterTransport from './WriterTransport.ts';
 /**
  * A transport that pushes logs to a tcp server or a unix sock.
  */
-export default class TcpTransport<LogLevels> extends WriterTransport<LogLevels> {
+export default class TcpTransport<LogLevel> extends WriterTransport<LogLevel> {
 	/** The connection options. */
 	#connectOptions: Deno.ConnectOptions;
 
@@ -14,7 +14,7 @@ export default class TcpTransport<LogLevels> extends WriterTransport<LogLevels> 
 	 * Create a new file transport.
 	 * @param options The file transport options.
 	 */
-	public constructor(options: TWriterTransportOptions<LogLevels> & Deno.ConnectOptions) {
+	public constructor(options: TWriterTransportOptions<LogLevel> & Deno.ConnectOptions) {
 		super(options);
 		this.#connectOptions = {
 			port: options.port,
