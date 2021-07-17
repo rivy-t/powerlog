@@ -268,7 +268,15 @@ export class PowerLog<LogLevel> extends LogLevelManager<LogLevel> {
 // export type LL<LogLevel> = Set<keyof LogLevel>;
 // export type LogLevelColor = (_: string) => string;
 
-export namespace logLevels {
+export namespace LogLevels {
+
+	export namespace Properties {
+		export type $default = {
+			color?: typeof Colors.reset,
+			badge?: string,
+		}
+	}
+
 	export enum $default {
 		critical,
 		error,
@@ -293,24 +301,24 @@ export namespace logLevels {
 
 	export namespace colors {
 		export const $default = new Map([
-			[logLevels.$default.trace, Colors.yellow],
-			[logLevels.$default.debug, Colors.yellow],
-			[logLevels.$default.info, Colors.brightBlue],
-			[logLevels.$default.notice, Colors.cyan],
-			[logLevels.$default.warning, Colors.magenta],
-			[logLevels.$default.error, Colors.red],
-			[logLevels.$default.critical, (s: string) => Colors.bgBrightRed(Colors.brightWhite(s))],
+			[LogLevels.$default.trace, Colors.yellow],
+			[LogLevels.$default.debug, Colors.yellow],
+			[LogLevels.$default.info, Colors.brightBlue],
+			[LogLevels.$default.notice, Colors.cyan],
+			[LogLevels.$default.warning, Colors.magenta],
+			[LogLevels.$default.error, Colors.red],
+			[LogLevels.$default.critical, (s: string) => Colors.bgBrightRed(Colors.brightWhite(s))],
 		]);
 	}
 	export namespace prefixes {
 		export const $default = new Map([
-			[logLevels.$default.trace, 'trac'],
-			[logLevels.$default.debug, 'dbug'],
-			[logLevels.$default.info, 'info'],
-			[logLevels.$default.notice, 'Note'],
-			[logLevels.$default.warning, 'WARN'],
-			[logLevels.$default.error, 'ERR!'],
-			[logLevels.$default.critical, 'CRIT'],
+			[LogLevels.$default.trace, 'trac'],
+			[LogLevels.$default.debug, 'dbug'],
+			[LogLevels.$default.info, 'info'],
+			[LogLevels.$default.notice, 'Note'],
+			[LogLevels.$default.warning, 'WARN'],
+			[LogLevels.$default.error, 'ERR!'],
+			[LogLevels.$default.critical, 'CRIT'],
 		]);
 	}
 }
@@ -328,7 +336,7 @@ export const noColorFormatter = (data: ILogData) =>
 	}/${data.timestamp.getFullYear()} ${_n(data.timestamp.getHours())}:${
 		_n(data.timestamp.getMinutes())
 	}:${_n(data.timestamp.getSeconds())}] ` +
-	`(${data.name}) ${logLevels.prefixes.$default.get(data.level) || ''} ${
+	`(${data.name}) ${LogLevels.prefixes.$default.get(data.level) || ''} ${
 		sprintf(
 			data.message,
 			...data.arguments,
@@ -343,11 +351,11 @@ export const colorFormatter = (data: ILogData) =>
 		_c(data.timestamp.getSeconds())
 	}] ` +
 	`(${Colors.bold(data.name)}) ${
-		(logLevels.colors.$default.get(data.level) || Colors.reset)(logLevels.prefixes.$default.get(data.level) || '')
+		(LogLevels.colors.$default.get(data.level) || Colors.reset)(LogLevels.prefixes.$default.get(data.level) || '')
 	} ${sprintf(data.message, ...data.arguments)}`;
 
-export const logger = PowerLog.get<typeof logLevels.$default>({
-	levels: logLevels.$default, // level.color level.prefix
+export const logger = PowerLog.get<typeof LogLevels.$default>({
+	levels: LogLevels.$default, // level.color level.prefix
 	name: '$default',
 	formatter: noColorFormatter,
 });
