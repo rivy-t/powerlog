@@ -3,7 +3,13 @@
 import { Event, Queue } from './deps.ts';
 import LogLevelManager from './LogLevelManager.ts';
 import TransportBase from './TransportBase.ts';
-import type { GenericFunction, ITransport, TFormatter, TLevelMethods, TLogOptions } from './types.ts';
+import type {
+	GenericFunction,
+	ITransport,
+	TFormatter,
+	TLevelMethods,
+	TLogOptions,
+} from './types.ts';
 
 import * as Colors from 'https://deno.land/std@0.79.0/fmt/colors.ts';
 
@@ -22,35 +28,35 @@ export class Container extends Map<string, PowerLog<any> & TLevelMethods<any>> {
 }
 
 export interface LogRecordOptions<LogLevel> {
-  msg: string;
-  args: unknown[];
-  level: LogLevel;
-  levelSet: Set<LogLevel>;
-  loggerName: string;
+	msg: string;
+	args: unknown[];
+	level: LogLevel;
+	levelSet: Set<LogLevel>;
+	loggerName: string;
 }
 
 export class LogRecord<LogLevel> {
-  readonly msg: string;
-  #args: unknown[];
-  #dateTime: Date;
-  readonly level: LogLevel;
-  // readonly levelName: string;
-  readonly loggerName: string;
+	readonly msg: string;
+	#args: unknown[];
+	#dateTime: Date;
+	readonly level: LogLevel;
+	// readonly levelName: string;
+	readonly loggerName: string;
 
-  constructor(options: LogRecordOptions<LogLevel>) {
-    this.msg = options.msg;
-    this.#args = [...options.args];
-    this.level = options.level;
-    this.loggerName = options.loggerName;
-    this.#dateTime = new Date();
-    // this.levelName = getLevelName(options.level);
-  }
-  get args(): unknown[] {
-    return [...this.#args];
-  }
-  get dateTime(): Date {
-    return new Date(this.#dateTime.getTime());
-  }
+	constructor(options: LogRecordOptions<LogLevel>) {
+		this.msg = options.msg;
+		this.#args = [...options.args];
+		this.level = options.level;
+		this.loggerName = options.loggerName;
+		this.#dateTime = new Date();
+		// this.levelName = getLevelName(options.level);
+	}
+	get args(): unknown[] {
+		return [...this.#args];
+	}
+	get dateTime(): Date {
+		return new Date(this.#dateTime.getTime());
+	}
 }
 
 /**
@@ -76,7 +82,9 @@ export class PowerLog<TLogLevel> extends LogLevelManager<TLogLevel> {
 		if (loggers.has(options.name)) {
 			const logger = loggers.get(options.name)!;
 			if (logger.enum !== options.levels) {
-				throw new Error('Mismatched TLogLevel type between existing PowerLog and requested PowerLog!');
+				throw new Error(
+					'Mismatched TLogLevel type between existing PowerLog and requested PowerLog!',
+				);
 			}
 			if (options.formatter) {
 				logger.format(options.formatter);
@@ -269,12 +277,8 @@ export class PowerLog<TLogLevel> extends LogLevelManager<TLogLevel> {
 // export type LogLevelColor = (_: string) => string;
 
 export namespace LogLevels {
-
 	export namespace Properties {
-		export type $default = {
-			color?: typeof Colors.reset,
-			badge?: string,
-		}
+		export type $default = { color?: typeof Colors.reset; badge?: string };
 	}
 
 	export enum $default {
@@ -297,7 +301,7 @@ export namespace LogLevels {
 		warning,
 		notice,
 		informational,
-		debug
+		debug,
 	}
 
 	export namespace colors {
@@ -308,7 +312,8 @@ export namespace LogLevels {
 			[LogLevels.$default.notice, Colors.cyan],
 			[LogLevels.$default.warn, Colors.magenta],
 			[LogLevels.$default.error, Colors.red],
-			[LogLevels.$default.critical, (s: string) => Colors.bgBrightRed(Colors.brightWhite(s))],
+			[LogLevels.$default.critical, (s: string) =>
+				Colors.bgBrightRed(Colors.brightWhite(s))],
 		]);
 	}
 	export namespace prefixes {
@@ -352,7 +357,15 @@ export const colorFormatter = (data: ILogData) =>
 		_c(data.timestamp.getSeconds())
 	}] ` +
 	`(${Colors.bold(data.name)}) ${
-		(LogLevels.colors.$default.get(data.level) || Colors.reset)(LogLevels.prefixes.$default.get(data.level) || '')
+		(LogLevels
+			.colors
+			.$default
+			.get(data.level) || Colors.reset)(
+				LogLevels
+					.prefixes
+					.$default
+					.get(data.level) || '',
+			)
 	} ${sprintf(data.message, ...data.arguments)}`;
 
 export const logger = PowerLog.get<typeof LogLevels.$default>({
