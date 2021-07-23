@@ -134,7 +134,7 @@ myLogger.resume();
 
 // Log some stuff.
 myLogger
-	.log('info', 'log/info Hello')
+	// .log('info', 'log/info Hello')
 	.trace('Hello %s', 'World')
 	.debug('Hello %s', 'World')
 	.info('Hello %s', 'World')

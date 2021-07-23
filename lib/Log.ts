@@ -27,23 +27,23 @@ export class Container extends Map<string, PowerLog<any> & TLevelMethods<any>> {
 	}
 }
 
-export interface LogRecordOptions<LogLevel> {
+export interface LogRecordOptions<TLogLevel> {
 	msg: string;
 	args: unknown[];
-	level: LogLevel;
-	levelSet: Set<LogLevel>;
+	level: TLogLevel;
+	levelSet: Set<TLogLevel>;
 	loggerName: string;
 }
 
-export class LogRecord<LogLevel> {
+export class LogRecord<TLogLevel> {
 	readonly msg: string;
 	#args: unknown[];
 	#dateTime: Date;
-	readonly level: LogLevel;
+	readonly level: TLogLevel;
 	// readonly levelName: string;
 	readonly loggerName: string;
 
-	constructor(options: LogRecordOptions<LogLevel>) {
+	constructor(options: LogRecordOptions<TLogLevel>) {
 		this.msg = options.msg;
 		this.#args = [...options.args];
 		this.level = options.level;
@@ -273,7 +273,7 @@ export class PowerLog<TLogLevel> extends LogLevelManager<TLogLevel> {
 	}
 }
 
-// export type LL<LogLevel> = Set<keyof LogLevel>;
+// export type LL<TLogLevel> = Set<keyof TLogLevel>;
 // export type LogLevelColor = (_: string) => string;
 
 export namespace LogLevels {
