@@ -98,9 +98,8 @@ export type TFormatTransportBaseOptions<LogLevel> = {
 	formatter?: TFormatter;
 };
 
-export type TWriterTransportOptions<LogLevel> = TFormatTransportBaseOptions<LogLevel> & {
-	stream?: Deno.Writer & Deno.Closer;
-	close?: boolean;
+export type TConsoleTransportOptions<LogLevel> = TFormatTransportBaseOptions<LogLevel> & {
+	std?: 'out' | 'err';
 };
 
 export type TFileTransportOptions<LogLevel> = TFormatTransportBaseOptions<LogLevel> & {
@@ -108,8 +107,13 @@ export type TFileTransportOptions<LogLevel> = TFormatTransportBaseOptions<LogLev
 	reset?: boolean;
 };
 
-export type TConsoleTransportOptions<LogLevel> = TFormatTransportBaseOptions<LogLevel> & {
-	std?: 'out' | 'err';
+export type TWriterTransportOptions<LogLevel> = TFormatTransportBaseOptions<LogLevel> & {
+	stream?: Deno.Writer & Deno.Closer;
+	close?: boolean;
+};
+
+export type TTcpTransportOptions<LogLevel> = TWriterTransportOptions<LogLevel> & {
+	timeout?: number;
 };
 
 export type TLogOptions<LogLevel> = TFormatTransportBaseOptions<LogLevel> & { name: string };

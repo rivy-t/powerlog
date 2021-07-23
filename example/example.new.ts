@@ -43,7 +43,9 @@ await logger.use(
 if (TcpConnection) {
 	await logger.use(
 		new WriterTransport({
-			levels: PowerLog.LogLevels.$default,
+			levels: PowerLog
+				.LogLevels
+				.$default,
 			stream: TcpConnection,
 			close: true,
 			formatter: PowerLog.colorFormatter,
@@ -53,9 +55,12 @@ if (TcpConnection) {
 
 logger.resume();
 
+// let lvl = PowerLog.LogLevels.$default.info;
+// console.debug({ lvl });
+
 // Log some stuff.
 logger
-	.log('info', 'log/info Hello')
+	// .log(lvl, 'log/info Hello')
 	// .trace({ TcpConnection })
 	.debug('Hello %s', 'World')
 	.info('Hello %s', 'World')

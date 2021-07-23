@@ -58,7 +58,7 @@ export class LogRecord<LogLevel> {
  */
 export const loggers = new Container();
 
-export class PowerLog<LogLevel> extends LogLevelManager<LogLevel> {
+export class PowerLog<TLogLevel> extends LogLevelManager<TLogLevel> {
 	/**
 	 * This is a static method used to create a new
 	 * PowerLog instance. It is most recommended to use
@@ -70,13 +70,13 @@ export class PowerLog<LogLevel> extends LogLevelManager<LogLevel> {
 	 * will be typed.
 	 * @param options The PowerLog options.
 	 */
-	public static get<LogLevel>(
-		options: TLogOptions<LogLevel>,
-	): PowerLog<LogLevel> & TLevelMethods<LogLevel> {
+	public static get<TLogLevel>(
+		options: TLogOptions<TLogLevel>,
+	): PowerLog<TLogLevel> & TLevelMethods<TLogLevel> {
 		if (loggers.has(options.name)) {
 			const logger = loggers.get(options.name)!;
 			if (logger.enum !== options.levels) {
-				throw new Error('LogLevel between existing PowerLog and requested PowerLog mismatch!');
+				throw new Error('Mismatched TLogLevel type between existing PowerLog and requested PowerLog!');
 			}
 			if (options.formatter) {
 				logger.format(options.formatter);
@@ -88,7 +88,7 @@ export class PowerLog<LogLevel> extends LogLevelManager<LogLevel> {
 		return logger;
 	}
 
-	public log(level: string, message: string, ...args: unknown[]): this {
+	public log(level: TLogLevel, message: string, ...args: unknown[]): this {
 		return this._push((this.#levels as any)[level], message, args);
 	}
 
@@ -111,13 +111,13 @@ export class PowerLog<LogLevel> extends LogLevelManager<LogLevel> {
 	}
 
 	/** The levels enumerable. */
-	#levels: LogLevel;
+	#levels: TLogLevel;
 
 	/** A default formatter to apply to new transports. */
 	#defaultFormatter?: TFormatter;
 
 	/** Transports to send log entries to. */
-	#transports = new Set<ITransport<LogLevel>>();
+	#transports = new Set<ITransport<TLogLevel>>();
 
 	/** The name of this logger. */
 	public readonly name: string;
@@ -130,7 +130,7 @@ export class PowerLog<LogLevel> extends LogLevelManager<LogLevel> {
 	 * typings to the level methods created by PowerLog.
 	 * @param options The PowerLog options.
 	 */
-	public constructor(options: TLogOptions<LogLevel>) {
+	public constructor(options: TLogOptions<TLogLevel>) {
 		super(options.levels, options.enabled);
 		this.#levels = options.levels;
 		this.#defaultFormatter = options.formatter;
@@ -191,7 +191,7 @@ export class PowerLog<LogLevel> extends LogLevelManager<LogLevel> {
 	 * Add an initialize transports to this instance.
 	 * @param transports The transports.
 	 */
-	public async use(...transports: ITransport<LogLevel>[]) {
+	public async use(...transports: ITransport<TLogLevel>[]) {
 		for (const transport of transports) {
 			if (!TransportBase.isTransport(transport)) {
 				throw new Error('Not a transport!');
@@ -221,7 +221,7 @@ export class PowerLog<LogLevel> extends LogLevelManager<LogLevel> {
 	 *
 	 * @param transports The transports.
 	 */
-	public async remove(...transports: ITransport<LogLevel>[]) {
+	public async remove(...transports: ITransport<TLogLevel>[]) {
 		for (const transport of transports) {
 			if (!this.#transports.has(transport)) continue;
 			if (!transport.disposed && transport.initialized) {
@@ -284,6 +284,7 @@ export namespace LogLevels {
 		warning = warn,
 		notice,
 		info,
+		informational = info,
 		debug,
 		trace,
 	}
@@ -305,7 +306,7 @@ export namespace LogLevels {
 			[LogLevels.$default.debug, Colors.yellow],
 			[LogLevels.$default.info, Colors.brightBlue],
 			[LogLevels.$default.notice, Colors.cyan],
-			[LogLevels.$default.warning, Colors.magenta],
+			[LogLevels.$default.warn, Colors.magenta],
 			[LogLevels.$default.error, Colors.red],
 			[LogLevels.$default.critical, (s: string) => Colors.bgBrightRed(Colors.brightWhite(s))],
 		]);
@@ -316,7 +317,7 @@ export namespace LogLevels {
 			[LogLevels.$default.debug, 'dbug'],
 			[LogLevels.$default.info, 'info'],
 			[LogLevels.$default.notice, 'Note'],
-			[LogLevels.$default.warning, 'WARN'],
+			[LogLevels.$default.warn, 'WARN'],
 			[LogLevels.$default.error, 'ERR!'],
 			[LogLevels.$default.critical, 'CRIT'],
 		]);
