@@ -1,8 +1,8 @@
-// spell-checker:ignore (func) sprintf
+// spell-checker:ignore () Deno ; (func) sprintf ; (strings) dbug trac
 
+import TransportBase from './transport/TransportBase.ts';
 import { Event, Queue } from './deps.ts';
 import LogLevelManager from './LogLevelManager.ts';
-import TransportBase from './TransportBase.ts';
 import type {
 	GenericFunction,
 	ITransport,

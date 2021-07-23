@@ -1,12 +1,12 @@
-// spell-checker:ignore () Deno
+// spell-checker:ignore () Deno rivy
 
-import type { TTcpTransportOptions } from './types.ts';
+import type { TTcpTransportOptions } from '../types.ts';
 import WriterTransport from './WriterTransport.ts';
 
 /**
  * A transport that pushes logs to a tcp server or a unix sock.
  */
-export default class TcpTransport<LogLevel> extends WriterTransport<LogLevel> {
+export default class TcpTransport<TLogLevel> extends WriterTransport<TLogLevel> {
 	/** The connection options. */
 	#connectOptions: Deno.ConnectOptions;
 	#timeout?: number;
@@ -15,7 +15,7 @@ export default class TcpTransport<LogLevel> extends WriterTransport<LogLevel> {
 	 * Create a new file transport.
 	 * @param options The file transport options.
 	 */
-	public constructor(options: TTcpTransportOptions<LogLevel> & Deno.ConnectOptions) {
+	public constructor(options: TTcpTransportOptions<TLogLevel> & Deno.ConnectOptions) {
 		super(options);
 		this.#connectOptions = {
 			port: options.port,

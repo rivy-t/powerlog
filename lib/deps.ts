@@ -1,3 +1,5 @@
+// spell-checker:ignore (funcs) sprintf
+
 // Exports - Standard Library
 export { sprintf } from 'https://deno.land/std@0.79.0/fmt/printf.ts';
 

@@ -1,8 +1,8 @@
 // spell-checker:ignore () sprintf endRegion
 
-import { sprintf } from './deps.ts';
+import { sprintf } from '../deps.ts';
+import type { ILogData, TFormatTransportBaseOptions } from '../types.ts';
 import TransportBase from './TransportBase.ts';
-import type { ILogData, TFormatTransportBaseOptions } from './types.ts';
 
 // #region Discord Message Interfaces
 
@@ -86,10 +86,10 @@ export interface IDiscordMessage {
 
 export type TDiscordFormatter = (data: ILogData) => Promise<IDiscordMessage> | IDiscordMessage;
 
-export type TDiscordOptions<LogLevel> = {
-	enabled?: (number | keyof LogLevel)[] | -1;
+export type TDiscordOptions<TLogLevel> = {
+	enabled?: (number | keyof TLogLevel)[] | -1;
 	formatter?: TDiscordFormatter;
-	levels: LogLevel;
+	levels: TLogLevel;
 	url: string;
 	username?: string;
 	avatar_url?: string;
@@ -101,7 +101,7 @@ export type TDiscordOptions<LogLevel> = {
 /**
  * A transport that sends messages to a discord webhook.
  */
-export default class DiscordWebhookTransport<LogLevel> extends TransportBase<LogLevel> {
+export default class DiscordWebhookTransport<TLogLevel> extends TransportBase<TLogLevel> {
 	#formatter: undefined | TDiscordFormatter;
 	#url: string;
 	#username?: string;
@@ -113,7 +113,7 @@ export default class DiscordWebhookTransport<LogLevel> extends TransportBase<Log
 	 * @param options The discord webhook transport
 	 *  options.
 	 */
-	public constructor(options: TDiscordOptions<LogLevel>) {
+	public constructor(options: TDiscordOptions<TLogLevel>) {
 		super(options.levels, options.enabled);
 		this.#formatter = options.formatter;
 		this.#url = options.url;

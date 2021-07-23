@@ -1,7 +1,7 @@
 // spell-checker:ignore () sprintf
 
+import DiscordWebhookTransport from '../lib/transport/DiscordWebhookTransport.ts';
 import { sprintf } from '../lib/deps.ts';
-import DiscordWebhookTransport from '../lib/DiscordWebhookTransport.ts';
 import { PowerLog } from '../lib/Log.ts';
 
 enum LogLevel {

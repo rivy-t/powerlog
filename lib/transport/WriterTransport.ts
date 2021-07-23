@@ -1,12 +1,12 @@
 // spell-checker:ignore () Deno
 
+import type { TWriterTransportOptions } from '../types.ts';
 import FormatTransportBase from './FormatTransportBase.ts';
-import type { TWriterTransportOptions } from './types.ts';
 
 /**
  * A transport that writes to a stream.
  */
-export default class WriterTransport<LogLevel> extends FormatTransportBase<LogLevel> {
+export default class WriterTransport<TLogLevel> extends FormatTransportBase<TLogLevel> {
 	/** The stream. */
 	#stream: Deno.Writer & Deno.Closer | undefined;
 	#close: boolean = true;
@@ -16,7 +16,7 @@ export default class WriterTransport<LogLevel> extends FormatTransportBase<LogLe
 	 * @param levels The levels enumerable.
 	 * @param stream The write stream.
 	 */
-	public constructor(options: TWriterTransportOptions<LogLevel>) {
+	public constructor(options: TWriterTransportOptions<TLogLevel>) {
 		super(options.levels, { formatter: options.formatter, enabled: options.enabled });
 		this.#stream = options.stream;
 		if (this.#close === false) {

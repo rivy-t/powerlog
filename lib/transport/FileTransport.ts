@@ -1,12 +1,12 @@
 // spell-checker:ignore () Deno
 
-import type { ILogData, TFileTransportOptions } from './types.ts';
+import type { ILogData, TFileTransportOptions } from '../types.ts';
 import WriterTransport from './WriterTransport.ts';
 
 /**
  * A transport that pushes logs to a file.
  */
-export default class FileTransport<LogLevel> extends WriterTransport<LogLevel> {
+export default class FileTransport<TLogLevel> extends WriterTransport<TLogLevel> {
 	/** The filename to write to. */
 	#filename: string;
 
@@ -17,7 +17,7 @@ export default class FileTransport<LogLevel> extends WriterTransport<LogLevel> {
 	 * Create a new file transport.
 	 * @param options The file transport options.
 	 */
-	public constructor(options: TFileTransportOptions<LogLevel>) {
+	public constructor(options: TFileTransportOptions<TLogLevel>) {
 		super(options);
 		this.#filename = options.filename;
 		if (options.reset === true) {

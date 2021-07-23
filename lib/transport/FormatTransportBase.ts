@@ -1,11 +1,11 @@
 // Imports
+import { ILogData, TFormatter, TFormatTransportBaseOptions } from '../types.ts';
 import TransportBase from './TransportBase.ts';
-import { ILogData, TFormatter, TFormatTransportBaseOptions } from './types.ts';
 
 /**
  * The transport base, but adds the ability for an external formatter.
  */
-export default class FormatTransportBase<LogLevel> extends TransportBase<LogLevel> {
+export default class FormatTransportBase<TLogLevel> extends TransportBase<TLogLevel> {
 	#formatter: undefined | TFormatter;
 
 	/**
@@ -14,8 +14,8 @@ export default class FormatTransportBase<LogLevel> extends TransportBase<LogLeve
 	 * @param formatter The formatter function.
 	 */
 	public constructor(
-		levels: LogLevel,
-		options?: Omit<TFormatTransportBaseOptions<LogLevel>, 'levels'>,
+		levels: TLogLevel,
+		options?: Omit<TFormatTransportBaseOptions<TLogLevel>, 'levels'>,
 	) {
 		super(levels, options?.enabled);
 		this.#formatter = options?.formatter;

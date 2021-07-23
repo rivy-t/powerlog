@@ -18,13 +18,13 @@ import {
 	underline,
 	yellow,
 } from 'https://deno.land/std@0.79.0/fmt/colors.ts';
-import ConsoleTransport from '../lib/ConsoleTransport.ts';
+import ConsoleTransport from '../lib/transport/ConsoleTransport.ts';
+import FileTransport from '../lib/transport/FileTransport.ts';
+import TcpTransport from '../lib/transport/TcpTransport.ts';
+import WriterTransport from '../lib/transport/WriterTransport.ts';
 import { sprintf } from '../lib/deps.ts';
-import FileTransport from '../lib/FileTransport.ts';
 import { PowerLog } from '../lib/Log.ts';
-import TcpTransport from '../lib/TcpTransport.ts';
 import type { ILogData } from '../lib/types.ts';
-import WriterTransport from '../lib/WriterTransport.ts';
 
 // An array of colors ordered by the log levels order.
 const defaultLogLevelColors = [

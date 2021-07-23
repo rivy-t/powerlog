@@ -2,9 +2,9 @@
 
 import * as PowerLog from '../lib/Log.ts';
 
-import ConsoleTransport from '../lib/ConsoleTransport.ts';
-import FileTransport from '../lib/FileTransport.ts';
-import WriterTransport from '../lib/WriterTransport.ts';
+import ConsoleTransport from '../lib/transport/ConsoleTransport.ts';
+import FileTransport from '../lib/transport/FileTransport.ts';
+import WriterTransport from '../lib/transport/WriterTransport.ts';
 
 const { logger } = PowerLog;
 logger.suspend();

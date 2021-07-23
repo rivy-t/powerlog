@@ -1,13 +1,13 @@
 // Imports
-import { Queue, sprintf } from './deps.ts';
-import LogLevelManager from './LogLevelManager.ts';
-import type { ILogData, ITransport } from './types.ts';
+import { Queue, sprintf } from '../deps.ts';
+import LogLevelManager from '../LogLevelManager.ts';
+import type { ILogData, ITransport } from '../types.ts';
 
 /**
  * A transportation base.
  */
-export default class TransportBase<LogLevel> extends LogLevelManager<LogLevel>
-	implements ITransport<LogLevel> {
+export default class TransportBase<TLogLevel> extends LogLevelManager<TLogLevel>
+	implements ITransport<TLogLevel> {
 	#init = false;
 	#disp = false;
 
