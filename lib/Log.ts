@@ -96,7 +96,7 @@ export class PowerLog<TLogLevel> extends LogLevelManager<TLogLevel> {
 		return logger;
 	}
 
-	public log(level: TLogLevel, message: string, ...args: unknown[]): this {
+	public log(level: keyof TLogLevel, message: string, ...args: unknown[]): this {
 		return this._push((this.#levels as any)[level], message, args);
 	}
 

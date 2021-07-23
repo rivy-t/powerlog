@@ -55,12 +55,9 @@ if (TcpConnection) {
 
 logger.resume();
 
-// let lvl = PowerLog.LogLevels.$default.info;
-// console.debug({ lvl });
-
 // Log some stuff.
 logger
-	// .log(lvl, 'log/info Hello')
+	.log('info', 'log/info Hello')
 	// .trace({ TcpConnection })
 	.debug('Hello %s', 'World')
 	.info('Hello %s', 'World')
