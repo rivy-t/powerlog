@@ -30,12 +30,12 @@ await logger.use(
 	// new ConsoleTransport({ levels: defaultLogLevel, formatter: colorFormatter }) // Disable 'critical' and 'debug' log levels.
 	// 	.disable(defaultLogLevel.critical, defaultLogLevel.debug),
 	// A stderr transport.
-	new ConsoleTransport({
-		levels: PowerLog.LogLevels.$default,
-		formatter: PowerLog.colorFormatter,
-		std: 'err',
-		// enabled: [defaultLogLevel.critical],
-	}),
+	// new ConsoleTransport({
+	// 	levels: PowerLog.LogLevels.$default,
+	// 	formatter: PowerLog.colorFormatter,
+	// 	std: 'err',
+	// 	// enabled: [defaultLogLevel.critical],
+	// }),
 	// Create a file transport.
 	new FileTransport({ levels: PowerLog.LogLevels.$default, filename: 'myLogs.log' }),
 );

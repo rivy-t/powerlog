@@ -1,5 +1,13 @@
-// spell-checker:ignore () Deno ; (func) sprintf ; (strings) dbug trac
+// spell-checker:ignore () Deno rivy ; (func) sprintf ; (strings) dbug trac
 
+// ToDO: [2021-07-23; rivy] research best typings
+// * see enum type explanations...
+// @ <https://stackoverflow.com/questions/50376977/generic-type-to-get-enum-keys-as-union-string-in-typescript> @@ <https://archive.is/IFW1l>
+// @ <https://stackoverflow.com/questions/63746463/how-to-create-enum-values-as-type-interface-in-typescript> @@ <https://archive.is/xtDuY>
+// # playground code @ <https://www.typescriptlang.org/play?#code/MYewdgzgLgBApmArgWxgFTtGBvAUDAmAQRgF4YByAQwoBp9CAhMygIwtwF9dcoBPAA5x0mKAFkqAgDxp4ADygIAJhBjQATgEswAcwB8LbAG0A1nD4xt6ALoAuNVC27uuUJFhz7GaBOneoBuR4hDBG1BR2lBraOnQMBGHskdRgIFAAFnDqDk6xXLgA9AUwAKLq6iDqXgDKAEwAzLW1XoLCFNih4ZHRugDcnUn2PTr9nBSWqqmwVBAQmjpgVKwANsJQIDD8QpT+FAB0uEA>
+// # playground code @ <https://www.typescriptlang.org/play#code/KYDwDg9gTgLgBAYwgOwM72MgrgWzgZRmDADkBDHYVOAbwCg5G4Vg4BeOAchc4BoGmMAO4R2XYRD4DGAMwCWyMgBsxneYqWc6AXzp1QkWHBgBPMK0LExNANoBrYCbgKCRUhSoBdAPwAuWgAWwGQAJsBQ-uhQCgDm2toA3HRIaPAslmD+GdZcPP40cEGh4f6cAGJyUOiccNq1SUA>
+
+import ConsoleTransport from './transport/ConsoleTransport.ts';
 import TransportBase from './transport/TransportBase.ts';
 import { Event, Queue } from './deps.ts';
 import LogLevelManager from './LogLevelManager.ts';
@@ -373,5 +381,13 @@ export const logger = PowerLog.get<typeof LogLevels.$default>({
 	name: '$default',
 	formatter: noColorFormatter,
 });
+await logger.use(
+	new ConsoleTransport({
+		levels: LogLevels.$default,
+		formatter: colorFormatter,
+		std: 'err',
+		// enabled: [defaultLogLevel.critical],
+	}),
+);
 
 loggers.set('$default', logger);
