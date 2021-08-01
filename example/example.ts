@@ -63,7 +63,9 @@ const noColorFormatter = (data: ILogData) =>
 	}:${_n(data.timestamp.getSeconds())}] ` +
 	`(${data.name}) ${defaultLogLevelLabels[data.level]} ${
 		sprintf(
-			data.message,
+			data
+				.arguments
+				.shift(),
 			...data.arguments,
 		)
 	}`;
@@ -76,7 +78,7 @@ const colorFormatter = (data: ILogData) =>
 		_c(data.timestamp.getSeconds())
 	}] ` +
 	`(${bold(data.name)}) ${defaultLogLevelColors[data.level](defaultLogLevelLabels[data.level])} ${
-		sprintf(data.message, ...data.arguments)
+		sprintf(data.arguments.shift(), ...data.arguments)
 	}`;
 
 // Create a new logger.

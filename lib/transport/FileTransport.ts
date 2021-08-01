@@ -42,7 +42,9 @@ export default class FileTransport<TLogLevel> extends WriterTransport<TLogLevel>
 
 	// Add a newline character to the message.
 	public async dataToByteArray(data: ILogData): Promise<Uint8Array> {
+		console.warn({ _: 'FileTransport/dataToByteArray', data });
 		const arr = await super.dataToByteArray(data);
-		return new Uint8Array([...arr, 10]);
+		const Uint8LF = 10;
+		return new Uint8Array([...arr, Uint8LF]);
 	}
 }

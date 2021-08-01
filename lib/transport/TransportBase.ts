@@ -1,3 +1,5 @@
+// spell-checker:ignore () Deno printf sprintf
+
 // Imports
 import { Queue, sprintf } from '../deps.ts';
 import LogLevelManager from '../LogLevelManager.ts';
@@ -8,14 +10,14 @@ import type { ILogData, ITransport } from '../types.ts';
  */
 export default class TransportBase<TLogLevel> extends LogLevelManager<TLogLevel>
 	implements ITransport<TLogLevel> {
-	#init = false;
-	#disp = false;
+	#initialized = false;
+	#disposed = false;
 
 	public get initialized(): boolean {
-		return this.#init;
+		return this.#initialized;
 	}
 	public get disposed(): boolean {
-		return this.#disp;
+		return this.#disposed;
 	}
 
 	/**
@@ -38,13 +40,13 @@ export default class TransportBase<TLogLevel> extends LogLevelManager<TLogLevel>
 	 * Initialize the transport.
 	 */
 	public init(): void {
-		this.#init = true;
+		this.#initialized = true;
 		this.#queue.start();
 	}
 
 	/** Dispose / stop the transport. */
 	public dispose(): void {
-		this.#disp = true;
+		this.#disposed = true;
 		this.#queue.stop();
 	}
 
@@ -79,6 +81,7 @@ export default class TransportBase<TLogLevel> extends LogLevelManager<TLogLevel>
 	 * @param data The log data.
 	 */
 	public dataToByteArray(data: ILogData): Promise<Uint8Array> | Uint8Array {
+		console.warn({ _: 'TransportBase/dataToByteArray', data });
 		return new Promise(async (resolve, reject) => {
 			try {
 				resolve(new TextEncoder().encode(await this.dataToString(data)));
@@ -93,6 +96,39 @@ export default class TransportBase<TLogLevel> extends LogLevelManager<TLogLevel>
 	 * @param data The log data.
 	 */
 	public dataToString(data: ILogData): Promise<string> | string {
-		return sprintf('%s ' + data.message, (this.enum as any)[data.level], ...data.arguments);
+		console.warn({ _: 'TransportBase/dataToString', data });
+		// use Deno `printf` format verbs; ref: <https://deno.land/std@0.103.0/fmt>
+		const formatRegex = /%[-+# 0<](?[0-9*]?[.]?[0-9*])?[bcoxXeEfFgGstTvj%]/;
+		const message = (data && data.arguments) ? this.asString(data.arguments.shift()) : '';
+		const isFmtString = message.match(formatRegex);
+		if (isFmtString) {
+			return sprintf('%s ' + message, (this.enum as any)[data.level], ...data.arguments);
+		} else {
+			let s = '';
+			for (const o in data) {
+				s += ' ' + Deno.inspect(o, { colors: true });
+			}
+			return s;
+		}
+	}
+
+	asString(data: unknown): string {
+		if (typeof data === 'string') {
+			return data;
+		} else if (
+			data === null ||
+			typeof data === 'number' ||
+			typeof data === 'bigint' ||
+			typeof data === 'boolean' ||
+			typeof data === 'undefined' ||
+			typeof data === 'symbol'
+		) {
+			return String(data);
+		} else if (data instanceof Error) {
+			return data.stack!;
+		} else if (typeof data === 'object') {
+			return JSON.stringify(data);
+		}
+		return 'undefined';
 	}
 }

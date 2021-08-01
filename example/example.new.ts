@@ -57,11 +57,11 @@ logger.resume();
 
 // Log some stuff.
 logger
-	.log('notice', 'log/info Hello')
-	// .trace({ TcpConnection })
-	.debug('Hello %s', 'World')
-	.info('Hello %s', 'World')
-	.notice('Hello %s', 'World')
-	.warn('Hello %s', 'World')
-	.error('Hello %s', 'World')
-	.critical('Hello %s', 'World');
+	.log('notice', 'log/notice "Hello"')
+	.trace({ TcpConnection })
+	.debug('debug/Hello %s', 'World')
+	.info('info/Hello %s', 'World')
+	.notice('notice/Hello %s', 'World')
+	.warn('warn/Hello %s', 'World')
+	.error('error/Hello %s', 'World')
+	.critical('critical/Hello %s', 'World');

@@ -43,8 +43,8 @@ export interface ILogData {
 	/** The level that was used to produce the data. */
 	readonly level: number;
 
-	/** The message to use when producing the content. */
-	readonly message: TMessage;
+	// /** The message to use when producing the content. */
+	// readonly message: TMessage;
 
 	/** The arguments to use when producing the content. */
 	readonly arguments: TArguments;
@@ -85,7 +85,7 @@ export interface ITransport<TLogLevel> extends ILevelEmitter<TLogLevel> {
 
 export type TLevelMethods<TLogLevel> = {
 	[key in keyof TLogLevel]: (
-		message: string,
+		// message: string,
 		...args: unknown[]
 	) => PowerLog.PowerLog<TLogLevel> & TLevelMethods<TLogLevel>;
 };

@@ -111,11 +111,13 @@ export class PowerLog<TLogLevel> extends LogLevelManager<TLogLevel> {
 	// * ref: <https://stackoverflow.com/questions/38033142/how-to-constrain-the-type-of-generic-parameter-to-a-typescript-function-to-be-an> @@ <https://archive.is/gGk44>
 	// * note: this construction limits `level` to TLogLevel string keys and numbers ; intellisense will suggest the enum key names
 	public log(
-		level: keyof TLogLevel | TLogLevel[keyof TLogLevel],
-		message: string,
+		level:
+			| keyof TLogLevel
+			| TLogLevel[keyof TLogLevel],
+		// message: string,
 		...args: unknown[]
 	): this {
-		return this._push((this.#levels as any)[level], message, args);
+		return this._push((this.#levels as any)[level], args);
 	}
 
 	/**
@@ -163,20 +165,17 @@ export class PowerLog<TLogLevel> extends LogLevelManager<TLogLevel> {
 		this.name = options.name;
 		for (const key in options.levels) {
 			if (typeof key !== 'string') continue;
-			(this as any)[key] = (message: string, ...args: unknown[]) =>
-				this._push((this.#levels as any)[key], message, args);
+			(this as any)[key] = (...args: unknown[]) => this._push((this.#levels as any)[key], args);
 		}
 	}
 
-	private _pushToTransportQueue(
-		logObject: {
-			level: number;
-			message: string;
-			arguments: unknown[];
-			name: string;
-			timestamp: Date;
-		},
-	) {
+	private _pushToTransportQueue(logObject: {
+		level: number;
+		// message: string;
+		arguments: unknown[];
+		name: string;
+		timestamp: Date;
+	}) {
 		if (!this.emits(logObject.level)) return this;
 		for (const transport of this.#transports) {
 			if (!transport.emits(logObject.level)) continue;
@@ -197,10 +196,10 @@ export class PowerLog<TLogLevel> extends LogLevelManager<TLogLevel> {
 	 * @param message The message of the log entry.
 	 * @param args The
 	 */
-	private _push(level: number, message: string, args: unknown[]): this {
+	private _push(level: number, args: unknown[]): this {
 		// Must be defined here so all transports have an equal timestamp.
 		const t = new Date();
-		const logRecord = { level, message, arguments: args, name: this.name, timestamp: t };
+		const logRecord = { level, arguments: args, name: this.name, timestamp: t };
 
 		if (this.#suspended) {
 			this.#suspensionQueue.push(async () => {
@@ -354,37 +353,35 @@ const _d = Colors.dim('/');
 const _t = Colors.dim(':');
 
 // A formatter that doesn't use colors.
-export const noColorFormatter = (data: ILogData) =>
-	`[${_n(data.timestamp.getDate())}/${
+export const noColorFormatter = (data: ILogData) => {
+	console.warn({ _: 'noColorFormatter', data });
+	return `[${_n(data.timestamp.getDate())}/${
 		_n(data.timestamp.getMonth() + 1)
 	}/${data.timestamp.getFullYear()} ${_n(data.timestamp.getHours())}:${
 		_n(data.timestamp.getMinutes())
 	}:${_n(data.timestamp.getSeconds())}] ` +
-	`(${data.name}) ${LogLevels.prefixes.$default.get(data.level) || ''} ${
-		sprintf(
-			data.message,
-			...data.arguments,
-		)
-	}`;
+		`(${data.name}) ${LogLevels.prefixes.$default.get(data.level) || ''} ${
+			sprintf(data.arguments.shift(), ...data.arguments)
+		}`;
+};
 
 // A formatter that does use colors.
-export const colorFormatter = (data: ILogData) =>
-	`[${_c(data.timestamp.getDate())}${_d}${_c(data.timestamp.getMonth() + 1)}${_d}${
+export const colorFormatter = (data: ILogData) => {
+	console.warn({ _: 'colorFormatter', data });
+	return `[${_c(data.timestamp.getDate())}${_d}${_c(data.timestamp.getMonth() + 1)}${_d}${
 		_c(data.timestamp.getFullYear())
 	} ${_c(data.timestamp.getHours())}${_t}${_c(data.timestamp.getMinutes())}${_t}${
 		_c(data.timestamp.getSeconds())
 	}] ` +
-	`(${Colors.bold(data.name)}) ${
-		(LogLevels
-			.colors
-			.$default
-			.get(data.level) || Colors.reset)(
+		`(${Colors.bold(data.name)}) ${
+			(LogLevels.colors.$default.get(data.level) || Colors.reset)(
 				LogLevels
 					.prefixes
 					.$default
 					.get(data.level) || '',
 			)
-	} ${sprintf(data.message, ...data.arguments)}`;
+		} ${sprintf(data.arguments.shift(), ...data.arguments)}`;
+};
 
 export const logger = PowerLog.get<typeof LogLevels.$default>({
 	levels: LogLevels.$default, // level.color level.prefix
