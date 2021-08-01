@@ -104,7 +104,17 @@ export class PowerLog<TLogLevel> extends LogLevelManager<TLogLevel> {
 		return logger;
 	}
 
-	public log(level: keyof TLogLevel, message: string, ...args: unknown[]): this {
+	// log()
+	// * restrict generic `level` argument to enum TLogLevel type (as much as possible)
+	// * ref: <https://github.com/microsoft/TypeScript/issues/30611#issuecomment-479481978> @@ <https://archive.is/cFWi1>
+	// * ref: <https://stackoverflow.com/questions/55356672/how-to-emulate-t-extends-enum-generic-constraint> @@ <https://archive.is/aqm0U>
+	// * ref: <https://stackoverflow.com/questions/38033142/how-to-constrain-the-type-of-generic-parameter-to-a-typescript-function-to-be-an> @@ <https://archive.is/gGk44>
+	// * note: this construction limits `level` to TLogLevel string keys and numbers ; intellisense will suggest the enum key names
+	public log(
+		level: keyof TLogLevel | TLogLevel[keyof TLogLevel],
+		message: string,
+		...args: unknown[]
+	): this {
 		return this._push((this.#levels as any)[level], message, args);
 	}
 
