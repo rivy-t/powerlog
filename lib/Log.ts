@@ -165,7 +165,10 @@ export class PowerLog<TLogLevel> extends LogLevelManager<TLogLevel> {
 		this.name = options.name;
 		for (const key in options.levels) {
 			if (typeof key !== 'string') continue;
-			(this as any)[key] = (...args: unknown[]) => this._push((this.#levels as any)[key], args);
+			(this as any)[key] = (...args: unknown[]) => {
+				// console.warn({ _: `TransportBase/${key}` });
+				return this._push((this.#levels as any)[key], args);
+			};
 		}
 	}
 
@@ -197,15 +200,19 @@ export class PowerLog<TLogLevel> extends LogLevelManager<TLogLevel> {
 	 * @param args The
 	 */
 	private _push(level: number, args: unknown[]): this {
+		// console.warn({ _: `Log/_push` });
 		// Must be defined here so all transports have an equal timestamp.
 		const t = new Date();
 		const logRecord = { level, arguments: args, name: this.name, timestamp: t };
 
 		if (this.#suspended) {
+			// console.warn({ _: `Log/${level} - to *suspension* queue` });
 			this.#suspensionQueue.push(async () => {
+				// console.warn({ _: `Log/${level} - to queue (from *suspension* queue)` });
 				this._pushToTransportQueue(logRecord);
 			});
 		} else {
+			// console.warn({ _: `Log/${level} - to queue` });
 			this._pushToTransportQueue(logRecord);
 		}
 
@@ -354,7 +361,7 @@ const _t = Colors.dim(':');
 
 // A formatter that doesn't use colors.
 export const noColorFormatter = (data: ILogData) => {
-	console.warn({ _: 'noColorFormatter', data });
+	// console.warn({ _: 'noColorFormatter', data });
 	return `[${_n(data.timestamp.getDate())}/${
 		_n(data.timestamp.getMonth() + 1)
 	}/${data.timestamp.getFullYear()} ${_n(data.timestamp.getHours())}:${
@@ -367,7 +374,7 @@ export const noColorFormatter = (data: ILogData) => {
 
 // A formatter that does use colors.
 export const colorFormatter = (data: ILogData) => {
-	console.warn({ _: 'colorFormatter', data });
+	// console.warn({ _: 'colorFormatter', data });
 	return `[${_c(data.timestamp.getDate())}${_d}${_c(data.timestamp.getMonth() + 1)}${_d}${
 		_c(data.timestamp.getFullYear())
 	} ${_c(data.timestamp.getHours())}${_t}${_c(data.timestamp.getMinutes())}${_t}${
@@ -386,12 +393,12 @@ export const colorFormatter = (data: ILogData) => {
 export const logger = PowerLog.get<typeof LogLevels.$default>({
 	levels: LogLevels.$default, // level.color level.prefix
 	name: '$default',
-	formatter: noColorFormatter,
+	// formatter: noColorFormatter,
 });
 await logger.use(
 	new ConsoleTransport({
 		levels: LogLevels.$default,
-		formatter: colorFormatter,
+		// formatter: colorFormatter,
 		std: 'err',
 		// enabled: [defaultLogLevel.critical],
 	}),

@@ -5,6 +5,8 @@ import { Queue, sprintf } from '../deps.ts';
 import LogLevelManager from '../LogLevelManager.ts';
 import type { ILogData, ITransport } from '../types.ts';
 
+import * as Util from 'https://deno.land/std@0.103.0/node/util.ts';
+
 /**
  * A transportation base.
  */
@@ -55,6 +57,7 @@ export default class TransportBase<TLogLevel> extends LogLevelManager<TLogLevel>
 	 * @param data The log data.
 	 */
 	public async push(data: ILogData): Promise<unknown | undefined> {
+		// console.warn({ _: 'TransportBase/push(data)', data });
 		if (!this.emits(data.level)) return;
 		return await this._push(async () => await this.handle(await this.dataToByteArray(data)));
 	}
@@ -64,7 +67,8 @@ export default class TransportBase<TLogLevel> extends LogLevelManager<TLogLevel>
 	 * @param fn The function.
 	 * @param args The arguments to pass to the function.
 	 */
-	public async _push(fn: (...args: any[]) => any, ...args: any[]): Promise<unknown> {
+	public async _push(fn: (_: any[]) => any, ...args: any[]): Promise<unknown> {
+		// console.warn({ _: 'TransportBase/#queue.push(fn, args)', args });
 		return await this.#queue.push(fn, ...args);
 	}
 
@@ -73,6 +77,7 @@ export default class TransportBase<TLogLevel> extends LogLevelManager<TLogLevel>
 	 * @param data The log data.
 	 */
 	public async handle(data: Uint8Array): Promise<void> {
+		// console.warn({ _: 'TransportBase/handle(data)', data });
 		throw new Error('<Transport>.handle not implemented!');
 	}
 
@@ -81,11 +86,15 @@ export default class TransportBase<TLogLevel> extends LogLevelManager<TLogLevel>
 	 * @param data The log data.
 	 */
 	public dataToByteArray(data: ILogData): Promise<Uint8Array> | Uint8Array {
-		console.warn({ _: 'TransportBase/dataToByteArray', data });
+		// console.warn({ _: 'TransportBase/dataToByteArray', data });
+		// let s = this.dataToString(data);
 		return new Promise(async (resolve, reject) => {
 			try {
-				resolve(new TextEncoder().encode(await this.dataToString(data)));
+				let s = await this.dataToString(data);
+				// console.warn({ _: 'TransportBase/dataToByteArray', s });
+				resolve(new TextEncoder().encode(s));
 			} catch (error) {
+				console.error('REJECTED');
 				reject(error);
 			}
 		});
@@ -96,39 +105,54 @@ export default class TransportBase<TLogLevel> extends LogLevelManager<TLogLevel>
 	 * @param data The log data.
 	 */
 	public dataToString(data: ILogData): Promise<string> | string {
-		console.warn({ _: 'TransportBase/dataToString', data });
+		// console.warn({ _: 'TransportBase/dataToString', data });
+
 		// use Deno `printf` format verbs; ref: <https://deno.land/std@0.103.0/fmt>
-		const formatRegex = /%[-+# 0<](?[0-9*]?[.]?[0-9*])?[bcoxXeEfFgGstTvj%]/;
-		const message = (data && data.arguments) ? this.asString(data.arguments.shift()) : '';
+		const formatRegex = /%[-+# 0<]?([0-9*]?[.]?[0-9*])?[tbcoxXeEfFgGsTvj%]/; // spell-checker:disable-line
+
+		let s = sprintf('%s', (this.enum as any)[data.level]);
+		// console.warn({ _: 'TransportBase/dataToString', data, s });
+		const args = (data && data.arguments) ? [...data.arguments] : [];
+		const message = this.asString(args.shift() || '');
+		// console.warn({ _: 'TransportBase/dataToString', message, args });
 		const isFmtString = message.match(formatRegex);
 		if (isFmtString) {
-			return sprintf('%s ' + message, (this.enum as any)[data.level], ...data.arguments);
+			// console.warn({ _: 'TransportBase/dataToString', s });
+			s += ' ' + sprintf(message, ...args);
 		} else {
-			let s = '';
-			for (const o in data) {
-				s += ' ' + Deno.inspect(o, { colors: true });
+			for (const o of [message, ...args]) {
+				// console.warn({ _: 'TransportBase/dataToString (iter over objects)', s, o });
+				const isString = typeof o === 'string';
+				s += ' ' + (isString ? o : Deno.inspect(o, { colors: true }));
 			}
-			return s;
 		}
+		// console.warn({ _: 'TransportBase/dataToString', s });
+		// return s;
+		return new Promise(async (resolve, _reject) => {
+			resolve(s);
+		});
+		// return Util.format(data.arguments.shift(), ...data.arguments);
 	}
 
 	asString(data: unknown): string {
-		if (typeof data === 'string') {
-			return data;
-		} else if (
-			data === null ||
-			typeof data === 'number' ||
-			typeof data === 'bigint' ||
-			typeof data === 'boolean' ||
-			typeof data === 'undefined' ||
-			typeof data === 'symbol'
-		) {
-			return String(data);
-		} else if (data instanceof Error) {
-			return data.stack!;
-		} else if (typeof data === 'object') {
-			return JSON.stringify(data);
-		}
-		return 'undefined';
+		const isString = typeof data === 'string';
+		return isString ? data as string : Deno.inspect(data, { colors: true });
+		// if (typeof data === 'string') {
+		// 	return data;
+		// } else if (
+		// 	data === null ||
+		// 	typeof data === 'number' ||
+		// 	typeof data === 'bigint' ||
+		// 	typeof data === 'boolean' ||
+		// 	typeof data === 'undefined' ||
+		// 	typeof data === 'symbol'
+		// ) {
+		// 	return String(data);
+		// } else if (data instanceof Error) {
+		// 	return data.stack!;
+		// } else if (typeof data === 'object') {
+		// 	return JSON.stringify(data);
+		// }
+		// return 'undefined';
 	}
 }

@@ -124,11 +124,13 @@ export default class DiscordWebhookTransport<TLogLevel> extends TransportBase<TL
 	public async push(data: ILogData): Promise<unknown> {
 		if (!this.emits(data.level)) return;
 		this._push(() => new Promise((resolve) => setTimeout(resolve, this.#delay)));
+		let args = (data && data.arguments) ? [...data.arguments] : [];
+		let msg = args.shift() || '';
 		return await this._push(async () => {
 			let message = typeof this.#formatter === 'function'
 				? (await this.#formatter(data)) as IDiscordMessage
 				: {
-					content: sprintf('%s ' + data.message, (this.enum as any)[data.level], ...data.arguments),
+					content: sprintf('%s ' + msg, (this.enum as any)[data.level], ...args),
 				} as IDiscordMessage;
 			if (message instanceof Uint8Array) (message as any) = new TextDecoder().decode(message);
 			if (typeof message === 'string') message = { content: message };

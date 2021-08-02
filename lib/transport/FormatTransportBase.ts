@@ -49,14 +49,16 @@ export default class FormatTransportBase<TLogLevel> extends TransportBase<TLogLe
 	 * @param data The log data.
 	 */
 	public async dataToByteArray(data: ILogData): Promise<Uint8Array> {
-		console.warn({ _: 'FormatTransportBase/dataToByteArray', data });
+		// console.warn({ _: 'FormatTransportBase/dataToByteArray', data });
 		if (typeof this.#formatter === 'function') {
+			// console.warn({ _: 'FormatTransportBase/dataToByteArray: formatting...' });
 			const _ = await this.#formatter(data);
 			if (typeof _ === 'string') {
 				return new TextEncoder().encode(_);
 			}
 			return _;
 		}
+		// console.warn({ _: 'FormatTransportBase/dataToByteArray: dataToByteArray...' });
 		return await super.dataToByteArray(data);
 	}
 }

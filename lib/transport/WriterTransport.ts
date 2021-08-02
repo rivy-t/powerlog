@@ -41,6 +41,7 @@ export default class WriterTransport<TLogLevel> extends FormatTransportBase<TLog
 	 * @param data The produced log data.
 	 */
 	public async handle(data: Uint8Array): Promise<void> {
+		// console.warn({ _: 'WriteTransport/handle(data)', data });
 		await this.#stream!.write(data);
 	}
 
