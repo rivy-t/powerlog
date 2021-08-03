@@ -2,7 +2,7 @@
 
 import { sprintf } from '../deps.ts';
 import type { ILogData, TFormatTransportBaseOptions } from '../types.ts';
-import TransportBase from './TransportBase.ts';
+import TransportBase from './$base.ts';
 
 // #region Discord Message Interfaces
 

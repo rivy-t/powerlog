@@ -1,6 +1,6 @@
 // Imports
 import { ILogData, TFormatter, TFormatTransportBaseOptions } from '../types.ts';
-import TransportBase from './TransportBase.ts';
+import TransportBase from './$base.ts';
 
 /**
  * The transport base, but adds the ability for an external formatter.
